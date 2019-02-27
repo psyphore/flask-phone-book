@@ -7,9 +7,10 @@ name = "pypi"
 flask = "*"
 graphene = "*"
 "py2neo" = "*"
-flask-graphql = "*"
+flask-graphql = {editable = true,version = "*"}
 maya = "*"
 environs = "*"
+flask-migrate = "*"
 
 [dev-packages]
 ipdb = "*"
