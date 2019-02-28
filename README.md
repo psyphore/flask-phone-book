@@ -12,13 +12,15 @@ My 1st take at Python, Flask, GraphQL, Neo4J
 ## Commands
 
 1. from clean install without pipenv
-1. ```shell
-   > python install pipenv Flask Graphene py2neo
-   ```
+
+```shell
+ > python install pipenv Flask Graphene py2neo
+```
 
 1. with pipenv installed already
-1. ```shell
-   > pipenv shell
-   > pipenv install
-   > flask run
-   ```
+
+```shell
+ > pipenv shell
+ > pipenv install
+ > flask run
+```
