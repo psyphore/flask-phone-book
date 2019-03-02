@@ -25,11 +25,11 @@ class Person(GraphObject):
 
     @classmethod
     def all(self, graph_instance):
-        return self.select(graph_instance   )
+        return self.match(graph_instance)
 
     @classmethod
-    def filter(self, graph_instance):
-        return self.select(graph_instance).where()
+    def filter(self, graph_instance, criteria):
+        return self.match(graph=graph_instance).where(f"_.firstname = ~'{criteria}.*'")
 
     def as_dict(self):
         return {

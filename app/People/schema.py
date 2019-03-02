@@ -82,12 +82,20 @@ class PeopleQuery(graphene.ObjectType):
         service = PeopleService()
         person = service.fetch(email=email)
         print(f'> fetched {person} ')
+        if person is None:
+            raise GraphQLError(
+                f'"{email}" has not been found in our customers list.')
+
         return PersonType(**person.as_dict())
 
     def resolve_people(self, info):
         service = PeopleService()
         people = service.fetch_all()
         print(f'> fetched {people} ')
+        if people is None:
+            raise GraphQLError(
+                f'we did not find any people, please populate first.')
+
         return [PersonType(**person.as_dict()) for person in people]
 
     def resolve_search(self, info, **args):
