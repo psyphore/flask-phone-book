@@ -1,17 +1,15 @@
-from py2neo.ogm import Property, RelatedTo, Label
+from py2neo.ogm import GraphObject, Property, RelatedTo
 
 from app.models import BaseModel
 # from app.Products.models import Product
 # from app.Buildings.models import Building
+# BaseModel, 
 
-
-class Person(BaseModel):
+class Person(GraphObject):
     '''
     Person object, this represent a person in this system
     '''
-    __primarykey__ = 'email'
-
-    person = Label("Person")
+    __primarykey__ = 'firstname'
 
     title = Property()
     firstname = Property()
@@ -22,8 +20,16 @@ class Person(BaseModel):
 
     # products = RelatedTo('Product', 'KNOWS')
     # building = RelatedTo('Building', 'LOCATED_IN')
-    # team = RelatedTo('Person', 'MANAGES')
-    # manager = RelatedTo('Person', 'MANAGES')
+    team = RelatedTo('Person')
+    manager = RelatedTo('Person', 'MANAGES')
+
+    @classmethod
+    def all(self, graph_instance):
+        return self.select(graph_instance   )
+
+    @classmethod
+    def filter(self, graph_instance):
+        return self.select(graph_instance).where()
 
     def as_dict(self):
         return {
