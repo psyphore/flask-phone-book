@@ -1,9 +1,14 @@
 from py2neo.ogm import Property, RelatedTo, Label
 
 from app.models import BaseModel
+# from app.Products.models import Product
+# from app.Buildings.models import Building
 
 
 class Person(BaseModel):
+    '''
+    Person object, this represent a person in this system
+    '''
     __primarykey__ = 'email'
 
     person = Label("Person")
@@ -15,8 +20,10 @@ class Person(BaseModel):
     email_address = Property('emailAddress')
     date_updated = Property('updatedOn')
 
-    # receipts = RelatedTo('Receipt', 'HAS')
-    # stores = RelatedTo('Store', 'GOES_TO')
+    # products = RelatedTo('Product', 'KNOWS')
+    # building = RelatedTo('Building', 'LOCATED_IN')
+    # team = RelatedTo('Person', 'MANAGES')
+    # manager = RelatedTo('Person', 'MANAGES')
 
     def as_dict(self):
         return {

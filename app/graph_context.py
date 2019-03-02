@@ -5,18 +5,22 @@ from app import settings
 
 
 class GraphContext(object):
-  def __init__(self):
+  '''
+  GraphContext, will give you a connection to graph database specified on the .env
+  '''
+  graph=None
+  def __init__(self, *args, **kwargs):
     self.graph = Graph(
         host=settings.NEO4J_HOST,
         port=settings.NEO4J_PORT,
         user=settings.NEO4J_USER,
         password=settings.NEO4J_PASSWORD,
     )
+    print(f'> Graph {self.graph} initialized')
 
-  @staticmethod
+
   def get_instance(self):
     return self.graph
 
-  @staticmethod
-  def close_instance(self):
+  def close_instance():
     pass

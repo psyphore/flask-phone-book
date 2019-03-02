@@ -4,7 +4,7 @@ from .models import Person
 from .service import PeopleService
 
 
-class PersonSchema(graphene.ObjectType):
+class PersonType(graphene.ObjectType):
     title = graphene.String()
     firstname = graphene.String()
     lastname = graphene.String()
@@ -14,8 +14,8 @@ class PersonSchema(graphene.ObjectType):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        svc = PeopleService()
-        self.customer = svc(email=self.email).fetch()
+        # svc = PeopleService()
+        # self.person = svc.fetch(email=self.email_address)
 
     def resolve_team(self, info):
         # return [StoreSchema(**store.as_dict()) for store in self.customer.stores]
@@ -29,41 +29,78 @@ class PersonSchema(graphene.ObjectType):
         # return [ProductSchema(**product.as_dict()) for product in self.customer.products]
         pass
 
+class PeopleType(graphene.ObjectType):
+    people = graphene.List(PersonType)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # svc = PeopleService()
+        # self.people = svc.fetch_all()
+
+class SearchResult(graphene.Union):
+    class Meta:
+        types = (PersonType, PeopleType)
 
 class CreatePerson(graphene.Mutation):
     class Arguments:
-        name = graphene.String(required=True)
-        email = graphene.String(required=True)
-
+        title = graphene.String(required=True)
+        firstname = graphene.String(required=True)
+        lastname = graphene.String(required=True)
+        mobile_number = graphene.String(required=True)
+        email_address = graphene.String(required=True)
+        
     success = graphene.Boolean()
-    customer = graphene.Field(lambda: CustomerSchema)
+    person = graphene.Field(lambda: PersonType)
 
     def mutate(self, info, **kwargs):
-        customer = Customer(**kwargs)
-        customer.save()
+        person = Person(**kwargs)
+        person.save()
 
-        return CreateCustomer(customer=customer, success=True)
-
-
-class Query(graphene.ObjectType):
-    customer = graphene.Field(lambda: CustomerSchema, email=graphene.String())
-    stores = graphene.List(lambda: StoreSchema)
-    products = graphene.List(lambda: ProductSchema)
-
-    def resolve_customer(self, info, email):
-        customer = Customer(email=email).fetch()
-        return CustomerSchema(**customer.as_dict())
-
-    def resolve_stores(self, info):
-        return [StoreSchema(**store.as_dict()) for store in Store().all]
-
-    def resolve_products(self, info):
-        return [ProductSchema(**product.as_dict()) for product in Product().all]
+        return CreatePerson(person=person, success=True)
 
 
-class Mutations(graphene.ObjectType):
-    create_customer = CreateCustomer.Field()
-    submit_receipt = SubmitReceipt.Field()
+class PeopleQuery(graphene.ObjectType):
+    person = graphene.Field(lambda: PersonType, email=graphene.String())
+    people = graphene.List(lambda: PersonType)
+    search = graphene.List(lambda: SearchResult, q=graphene.String())
+    
+    def __init__(self):
+        self.ps = PeopleService()
+
+    def resolve_person(self, info, **args):
+        email = args.get("email")
+        person = self.ps.fetch(email=email)
+        return PersonType(**person.as_dict())
+
+    def resolve_people(self, info):
+        people = self.ps.fetch_all()
+        return [PersonType(**person.as_dict()) for person in people]
+
+    def resolve_search(self, info, **args):
+        q = args.get("q")  # Search query
+
+        result = self.ps.filter(query=q)
+
+        return result
+
+        # # Get queries
+        # bookdata_query = BookData.get_query(info)
+        # author_query = Author.get_query(info)
+
+        # # Query Books
+        # books = bookdata_query.filter((BookModel.title.contains(q)) |
+        #                               (BookModel.isbn.contains(q)) |
+        #                               (BookModel.authors.any(AuthorModel.name.contains(q)))).all()
+
+        # # Query Authors
+        # authors = author_query.filter(AuthorModel.name.contains(q)).all()
+
+        # return authors + books  # Combine lists
 
 
-schema = graphene.Schema(query=Query, mutation=Mutations, auto_camelcase=True)
+class PeopleMutations(graphene.ObjectType):
+    create_person = CreatePerson.Field()
+    # submit_receipt = SubmitReceipt.Field()
+
+
+schema = graphene.Schema(query=PeopleQuery, mutation=None, auto_camelcase=True, types=[PersonType, PeopleType, SearchResult])

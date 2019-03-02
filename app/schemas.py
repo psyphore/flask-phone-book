@@ -1,6 +1,7 @@
 import graphene
 
 from .models import Customer, Store, Receipt, Product
+from app.People.schema import PeopleQuery, PeopleMutations
 
 
 class ProductSchema(graphene.ObjectType):
@@ -105,19 +106,20 @@ class CreateCustomer(graphene.Mutation):
 
 
 class Query(graphene.ObjectType):
-    customer = graphene.Field(lambda: CustomerSchema, email=graphene.String())
+    # customer = graphene.Field(lambda: CustomerSchema, email=graphene.String())
+    person = graphene.Field(lambda: PeopleSchema, email=graphene.String())
     stores = graphene.List(lambda: StoreSchema)
     products = graphene.List(lambda: ProductSchema)
 
-    def resolve_customer(self, info, email):
-        customer = Customer(email=email).fetch()
-        return CustomerSchema(**customer.as_dict())
+    # def resolve_person(self, info, email):
+    #     customer = Customer(email=email).fetch()
+    #     return CustomerSchema(**customer.as_dict())
 
-    def resolve_stores(self, info):
-        return [StoreSchema(**store.as_dict()) for store in Store().all]
+    # def resolve_stores(self, info):
+    #     return [StoreSchema(**store.as_dict()) for store in Store().all]
 
-    def resolve_products(self, info):
-        return [ProductSchema(**product.as_dict()) for product in Product().all]
+    # def resolve_products(self, info):
+    #     return [ProductSchema(**product.as_dict()) for product in Product().all]
 
 
 class Mutations(graphene.ObjectType):
@@ -125,4 +127,5 @@ class Mutations(graphene.ObjectType):
     submit_receipt = SubmitReceipt.Field()
 
 
-schema = graphene.Schema(query=Query, mutation=Mutations, auto_camelcase=False)
+# schema = graphene.Schema(query=Query, mutation=Mutations, auto_camelcase=True)
+schema = graphene.Schema(query=PeopleQuery, mutation=PeopleMutations, auto_camelcase=True)
