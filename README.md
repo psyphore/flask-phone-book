@@ -30,3 +30,16 @@ My 1st take at Python, Flask, GraphQL, Neo4J
  > pipenv install
  > flask run
 ```
+
+## Environment Settings
+```env
+DEBUG=true
+BIND_HOST=127.0.0.1
+BIND_PORT=5000
+
+NEO4J_HOST=localhost
+NEO4J_HTTP_PORT=7474
+NEO4J_BOLT_PORT=7687
+NEO4J_USER=username
+NEO4J_PASSWORD=password
+```
