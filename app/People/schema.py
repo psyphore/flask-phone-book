@@ -5,12 +5,27 @@ from .models import Person
 from .service import PeopleService
 
 
-class TeamType(graphene.ObjectType):
-    id = graphene.ID()
+class Character(graphene.Interface):
+    id = graphene.ID(required=True)
+    
+    title = graphene.String(required=True)
+    firstname = graphene.String(required=True)
+    lastname = graphene.String(required=True)
+    bio = graphene.String()
+    knownAs = graphene.String()
+    avatar = graphene.String()
+    mobile = graphene.String()
+    email = graphene.String(required=True)
 
-    title = graphene.String()
-    firstname = graphene.String()
-    lastname = graphene.String()
+    team = graphene.List(lambda: Character)
+    
+
+class TeamType(graphene.ObjectType):
+    '''Team Type, represents a GraphQL version of a person's team member or manager entity'''
+
+    class Meta:
+        interfaces=(Character,)
+
     mobile_number = graphene.String()
     email_address = graphene.String()
     date_updated = graphene.DateTime()
@@ -23,20 +38,14 @@ class ProductType(graphene.ObjectType):
     date_updated = graphene.DateTime()
 
 class PersonType(graphene.ObjectType):
+    '''Person Type, represents a GraphQL version of a person entity'''
 
-    id = graphene.ID()
+    class Meta:
+        interfaces=(Character,)
 
-    title = graphene.String()
-    firstname = graphene.String()
-    lastname = graphene.String()
-    mobile_number = graphene.String()
-    email_address = graphene.String()
-    date_updated = graphene.DateTime()
-
-    team = graphene.List(TeamType)
-    manager = graphene.String()
-    products = graphene.List(ProductType)
-    location = graphene.String()
+    manager = Character
+    products = graphene.List(lambda: ProductType)
+    location = graphene.List(lambda: graphene.String)
 
     def resolve_team(self, info):
         # return [StoreSchema(**store.as_dict()) for store in self.customer.stores]
@@ -51,8 +60,10 @@ class PersonType(graphene.ObjectType):
         pass
 
 class SearchResultType(graphene.ObjectType):
-    count=graphene.Int()
-    items=graphene.List(PersonType)
+    '''Search Result, containing a count of items contained in the items member'''
+
+    count=graphene.Int(0)
+    items=graphene.List(lambda: PersonType)
     
 class CreatePerson(graphene.Mutation):
     class Arguments:
@@ -73,41 +84,44 @@ class CreatePerson(graphene.Mutation):
 
 
 class PeopleQuery(graphene.ObjectType):   
-    person = graphene.Field(PersonType, email=graphene.String())
-    people = graphene.List(PersonType)
-    search = graphene.Field(SearchResultType, q=graphene.String())
+    '''People Query, fetch person entries matching to provided criteria'''
+
+    person = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
+    people = graphene.List(lambda: PersonType, limit=graphene.Int(10))
+    search = graphene.Field(SearchResultType, query=graphene.NonNull(graphene.String), limit=graphene.Int(10))
 
     def resolve_person(self, info, **args):
-        email = args.get("email")
+        identity = args.get("id")
         service = PeopleService()
-        person = service.fetch(email=email)
-        print(f'> fetched {person} ')
+        person = service.fetch(id=identity)
         if person is None:
             raise GraphQLError(
                 f'"{email}" has not been found in our customers list.')
 
         return PersonType(**person.as_dict())
 
-    def resolve_people(self, info):
+    def resolve_people(self, info, **args):
+        l = args.get("limit")
         service = PeopleService()
-        people = service.fetch_all()
-        print(f'> fetched {people} ')
+        people = service.fetch_all(limit=l)
         if people is None:
-            raise GraphQLError(
-                f'we did not find any people, please populate first.')
+            raise GraphQLError('we did not find any people, please populate first.')
 
         return [PersonType(**person.as_dict()) for person in people]
 
     def resolve_search(self, info, **args):
-        q = args.get("q") 
+        q, l = args.get("query"), args.get("limit")
         service = PeopleService()
-        result = service.filter(query=q)
-        print(f'> fetched {result} ')
-        if result is None:
-            raise GraphQLError(
-                f'"{q}" has not been found in our customers list.')
+        result = service.filter(query=q,limit=l)
 
-        return SearchResultType(**result)
+        if result is None:
+            raise GraphQLError(f'"{q}" has not been found in our customers list.')
+
+        sr = SearchResultType()
+        sr.count = len(result)
+        sr.items = [PersonType(**person.as_dict()) for person in result]
+
+        return sr
 
 
 class PeopleMutations(graphene.ObjectType):

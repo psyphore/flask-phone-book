@@ -8,19 +8,19 @@ class GraphContext(object):
   '''
   GraphContext, will give you a connection to graph database specified on the .env
   '''
+  graph=None
   
   def __init__(self):
-    self.graph = Graph(
-        host=settings.NEO4J_HOST,
-        port=settings.NEO4J_PORT,
-        user=settings.NEO4J_USER,
-        password=settings.NEO4J_PASSWORD,
-    )
+    self.graph = Graph(f"bolt://{settings.NEO4J_HOST}:{settings.NEO4J_BOLT_PORT}", auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD))
 
-  @classmethod
+  @property
   def get_instance(self):
     return self.graph
 
   @classmethod
   def close_instance():
     pass
+
+  @property
+  def get_instance_2():
+    return Graph(f"bolt://{settings.NEO4J_HOST}:{settings.NEO4J_BOLT_PORT}", auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD))

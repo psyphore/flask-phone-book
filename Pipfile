@@ -11,12 +11,12 @@ flask-graphql = {editable = true,version = "*"}
 maya = "*"
 environs = "*"
 flask-migrate = "*"
-autopep8 = {editable = true,version = "*"}
 
 [dev-packages]
 ipdb = "*"
 "flake8" = "*"
-"autopep8" = "*"
+autopep8 = {editable = true,version = "*"}
+pytest = "*"
 
 [requires]
 python_version = "3.7"
