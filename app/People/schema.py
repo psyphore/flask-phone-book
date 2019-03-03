@@ -3,6 +3,7 @@ from graphql import GraphQLError
 
 from .models import Person
 from .service import PeopleService
+# import .graphql_types.py
 
 
 class Character(graphene.Interface):
