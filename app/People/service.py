@@ -1,5 +1,5 @@
 import maya
-from py2neo import NodeMatcher
+from py2neo import NodeMatcher, RelationshipMatcher
 
 
 from app.graph_context import GraphContext
@@ -50,6 +50,34 @@ class PeopleService():
         try:
             matcher = NodeMatcher(graph=GraphContext().get_instance)
             response = list(matcher.match('Person').where(f"_.firstname =~ '{query}.*'").order_by("_.firstname").limit(limit))
+            if len(response) > 0:
+                parsed = [Person.wrap(r) for r in response]
+                return parsed
+            return []
+        except Exception as ex:
+            print(f'x exception: {ex}')
+            return []
+
+    def fetch_team(self, context):
+        '''Fetch all people who share the same manager as current person'''
+        
+        try:
+            matcher = RelationshipMatcher(graph=GraphContext().get_instance)
+            response = list(matcher.match('Person', 'MANAGES').order_by("_.firstname"))
+            if len(response) > 0:
+                parsed = [Person.wrap(r) for r in response]
+                return parsed
+            return []
+        except Exception as ex:
+            print(f'x exception: {ex}')
+            return []
+    
+    def fetch_manager(self, context):
+        '''Fetch all people who share the same manager as current person'''
+        
+        try:
+            matcher = RelationshipMatcher(graph=GraphContext().get_instance)
+            response = list(matcher.match('Person', 'MANAGES').order_by("_.firstname"))
             if len(response) > 0:
                 parsed = [Person.wrap(r) for r in response]
                 return parsed

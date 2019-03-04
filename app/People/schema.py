@@ -5,6 +5,8 @@ from .models import Person
 from .service import PeopleService
 from .graphql_types import Character, TeamType, ProductType, PersonType, SearchResultType, CreatePerson
 
+service = PeopleService()
+
 class PeopleQuery(graphene.ObjectType):   
     '''People Query, fetch person entries matching to provided criteria'''
 
@@ -14,17 +16,17 @@ class PeopleQuery(graphene.ObjectType):
 
     def resolve_person(self, info, **args):
         identity = args.get("id")
-        service = PeopleService()
+        servicex = PeopleService()
         person = service.fetch(id=identity)
         if person is None:
             raise GraphQLError(
-                f'"{email}" has not been found in our customers list.')
+                f'"{identity}" has not been found in our customers list.')
 
         return PersonType(**person.as_dict())
 
     def resolve_people(self, info, **args):
         l = args.get("limit")
-        service = PeopleService()
+        servicex = PeopleService()
         people = service.fetch_all(limit=l)
         if people is None:
             raise GraphQLError('we did not find any people, please populate first.')
@@ -33,7 +35,6 @@ class PeopleQuery(graphene.ObjectType):
 
     def resolve_search(self, info, **args):
         q, l = args.get("query"), args.get("limit")
-        service = PeopleService()
         result = service.filter(query=q,limit=l)
 
         if result is None:

@@ -11,6 +11,10 @@ flask-graphql = {editable = true,version = "*"}
 maya = "*"
 environs = "*"
 flask-migrate = "*"
+goole-api-python-client = "*"
+pyopenssl = "*"
+pytz = {editable = true,version = "*"}
+google-api-python-client = {editable = true,version = "*"}
 
 [dev-packages]
 ipdb = "*"

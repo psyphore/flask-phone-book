@@ -3,6 +3,8 @@ import graphene
 from .models import Person
 from .service import PeopleService
 
+service = PeopleService()
+
 class Character(graphene.Interface):
     id = graphene.ID(required=True)
     
@@ -45,12 +47,13 @@ class PersonType(graphene.ObjectType):
     location = graphene.List(lambda: graphene.String)
 
     def resolve_team(self, info, **args):
-        # return [StoreSchema(**store.as_dict()) for store in self.customer.stores]
-        pass
+        print(f'team args: {args}, \nteam info: {info}')
+        person = args.get("")
+        return [PersonType(**member.as_dict()) for member in service.fetch_team(context=person)]
 
     def resolve_manager(self, info, **args):
-        # return [ReceiptSchema(**receipt.as_dict()) for receipt in self.customer.receipts]
-        pass
+        person = args.get("")
+        return [PersonType(**manager.as_dict()) for manager in service.fetch_manager(context=person)]
 
     def resolve_products(self, info, **args):
         # return [ProductSchema(**product.as_dict()) for product in self.customer.products]
