@@ -16,22 +16,20 @@ class PeopleQuery(graphene.ObjectType):
 
     def resolve_person(self, info, **args):
         identity = args.get("id")
-        servicex = PeopleService()
         person = service.fetch(id=identity)
         if person is None:
             raise GraphQLError(
                 f'"{identity}" has not been found in our customers list.')
 
-        return PersonType(**person.as_dict())
+        return PersonType(**Person.wrap(person).as_dict())
 
     def resolve_people(self, info, **args):
         l = args.get("limit")
-        servicex = PeopleService()
         people = service.fetch_all(limit=l)
         if people is None:
             raise GraphQLError('we did not find any people, please populate first.')
 
-        return [PersonType(**person.as_dict()) for person in people]
+        return [PersonType(**Person.wrap(p).as_dict()) for p in people]
 
     def resolve_search(self, info, **args):
         q, l = args.get("query"), args.get("limit")
@@ -42,7 +40,7 @@ class PeopleQuery(graphene.ObjectType):
 
         sr = SearchResultType()
         sr.count = len(result)
-        sr.items = [PersonType(**person.as_dict()) for person in result]
+        sr.items = [PersonType(**Person.wrap(r).as_dict()) for r in result]
 
         return sr
 

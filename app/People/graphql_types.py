@@ -51,11 +51,13 @@ class PersonType(graphene.ObjectType):
     location = graphene.List(lambda: graphene.String)
 
     def resolve_team(self, info, **args):
-        return [PersonType(**member.as_dict()) for member in service.fetch_team(context=self)]
+        pass 
+        # return [PersonType(**member.as_dict()) for member in service.fetch_team(context=self)]
 
     def resolve_manager(self, info, **args):
-        person = args.get("")
-        return [PersonType(**manager.as_dict()) for manager in service.fetch_manager(context=self)]
+        pass
+        # person = args.get("")
+        # return [PersonType(**manager.as_dict()) for manager in service.fetch_manager(context=self)]
 
     def resolve_products(self, info, **args):
         # return [ProductSchema(**product.as_dict()) for product in self.customer.products]
