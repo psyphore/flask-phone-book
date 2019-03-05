@@ -5,9 +5,10 @@ from .service import PeopleService
 
 service = PeopleService()
 
+
 class Character(graphene.Interface):
     id = graphene.ID(required=True)
-    
+
     title = graphene.String(required=True)
     firstname = graphene.String(required=True)
     lastname = graphene.String(required=True)
@@ -18,16 +19,18 @@ class Character(graphene.Interface):
     email = graphene.String(required=True)
 
     team = graphene.List(lambda: Character)
-    
+
+
 class TeamType(graphene.ObjectType):
     '''Team Type, represents a GraphQL version of a person's team member or manager entity'''
 
     class Meta:
-        interfaces=(Character,)
+        interfaces = (Character,)
 
     mobile_number = graphene.String()
     email_address = graphene.String()
     date_updated = graphene.DateTime()
+
 
 class ProductType(graphene.ObjectType):
     id = graphene.ID()
@@ -36,38 +39,39 @@ class ProductType(graphene.ObjectType):
     description = graphene.String()
     date_updated = graphene.DateTime()
 
+
 class PersonType(graphene.ObjectType):
     '''Person Type, represents a GraphQL version of a person entity'''
 
     class Meta:
-        interfaces=(Character,)
+        interfaces = (Character,)
 
     manager = Character
     products = graphene.List(lambda: ProductType)
     location = graphene.List(lambda: graphene.String)
 
     def resolve_team(self, info, **args):
-        print(f'team args: {args}, \nteam info: {info}')
-        person = args.get("")
-        return [PersonType(**member.as_dict()) for member in service.fetch_team(context=person)]
+        return [PersonType(**member.as_dict()) for member in service.fetch_team(context=self)]
 
     def resolve_manager(self, info, **args):
         person = args.get("")
-        return [PersonType(**manager.as_dict()) for manager in service.fetch_manager(context=person)]
+        return [PersonType(**manager.as_dict()) for manager in service.fetch_manager(context=self)]
 
     def resolve_products(self, info, **args):
         # return [ProductSchema(**product.as_dict()) for product in self.customer.products]
         pass
-    
+
     def resolve_location(self, info, **args):
         pass
+
 
 class SearchResultType(graphene.ObjectType):
     '''Search Result, containing a count of items contained in the items member'''
 
-    count=graphene.Int(0)
-    items=graphene.List(lambda: PersonType)
-    
+    count = graphene.Int(0)
+    items = graphene.List(lambda: PersonType)
+
+
 class CreatePerson(graphene.Mutation):
     class Arguments:
         title = graphene.String(required=True)
@@ -75,7 +79,7 @@ class CreatePerson(graphene.Mutation):
         lastname = graphene.String(required=True)
         mobile_number = graphene.String(required=True)
         email_address = graphene.String(required=True)
-        
+
     success = graphene.Boolean()
     person = graphene.Field(lambda: PersonType)
 
