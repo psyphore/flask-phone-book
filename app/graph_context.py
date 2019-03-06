@@ -31,3 +31,11 @@ class GraphContext(object):
   @property
   def get_relationship_matcher(self):
     return NodeMatcher(graph=self.get_instance)
+
+  @staticmethod
+  def graph_cypher_exec(self, cypher_query, **parameters):
+    try:
+      return self.get_instance.evaluate(cypher_query,parameters=parameters)
+    except Exception as ex:
+      print(f'x exception: {ex}')
+      return []
