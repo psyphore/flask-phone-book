@@ -16,10 +16,6 @@ class GraphContext(object):
   def get_instance(self):
     return self.graph
 
-  @classmethod
-  def close_instance():
-    pass
-
   @property
   def get_instance_2():
     return Graph(f"bolt://{settings.NEO4J_HOST}:{settings.NEO4J_BOLT_PORT}", auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD))
@@ -30,4 +26,14 @@ class GraphContext(object):
 
   @property
   def get_relationship_matcher(self):
-    return NodeMatcher(graph=self.get_instance)
+    return RelationshipMatcher(graph=self.get_instance)
+
+  @staticmethod
+  def exec_cypher(self, query, **kwargs):
+    return self.get_instance.evaluate(query, **kwargs)
+
+  @staticmethod
+  def exec_transaction(self, query, **kwargs):
+    trx = self.get_instance.begin(autocommit=True)
+    trx.evaluate(query,**kwargs)
+    trx.commit()

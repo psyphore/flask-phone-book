@@ -40,7 +40,7 @@ class PeopleQuery(graphene.ObjectType):
 
         sr = SearchResultType()
         sr.count = len(result)
-        sr.items = [PersonType(**Person.wrap(r).as_dict()) for r in result]
+        sr.data = [PersonType(**Person.wrap(r).as_dict()) for r in result]
 
         return sr
 

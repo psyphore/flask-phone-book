@@ -19,6 +19,7 @@ class Character(graphene.Interface):
     email = graphene.String(required=True)
 
     team = graphene.List(lambda: Character)
+    manager = graphene.Field(lambda: Character)
 
 
 class TeamType(graphene.ObjectType):
@@ -46,13 +47,11 @@ class PersonType(graphene.ObjectType):
     class Meta:
         interfaces = (Character,)
 
-    manager = Character
     products = graphene.List(lambda: ProductType)
     location = graphene.List(lambda: graphene.String)
 
     def resolve_team(self, info, **args):
-        pass 
-        # return [PersonType(**member.as_dict()) for member in service.fetch_team(context=self)]
+        return [PersonType(**member.as_dict()) for member in service.fetch_team(context=self)]
 
     def resolve_manager(self, info, **args):
         pass
@@ -67,11 +66,22 @@ class PersonType(graphene.ObjectType):
         pass
 
 
+class SearchType(graphene.InputObjectType):
+    '''Search, 
+        :query, your search phrase
+        :first, how many are you fetching in a set
+        :offest, number to offset by a set
+    '''
+    class Arguments:
+        query = graphene.String(required=True)
+        first = graphene.Int(10)
+        offset = graphene.Int(0)
+
 class SearchResultType(graphene.ObjectType):
     '''Search Result, containing a count of items contained in the items member'''
 
     count = graphene.Int(0)
-    items = graphene.List(lambda: PersonType)
+    data = graphene.List(lambda: PersonType)
 
 
 class CreatePerson(graphene.Mutation):

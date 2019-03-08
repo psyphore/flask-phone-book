@@ -20,7 +20,7 @@ class PeopleService():
 
         try:
             matcher = GraphContext().get_node_matcher
-            return Person.wrap(matcher.match('Person', id=id).first())
+            return matcher.match('Person', id=id).first()
         except Exception as ex:
             print(f'x exception: {ex}')
             return None
@@ -32,7 +32,7 @@ class PeopleService():
             matcher = GraphContext().get_node_matcher
             response = list(matcher.match('Person').order_by(
                 "_.firstname").limit(limit))
-            return [Person.wrap(r) for r in response]
+            return response
         except Exception as ex:
             print(f'x exception: {ex}')
             return []
@@ -42,12 +42,9 @@ class PeopleService():
 
         try:
             matcher = GraphContext().get_node_matcher
-            response = list(matcher.match('Person').where(
-                f"_.firstname =~ '{query}.*'").order_by("_.firstname").limit(limit))
+            response = list(matcher.match('Person').where(f"_.firstname =~ '{query}.*'").order_by("_.firstname").limit(limit))
             if len(response) > 0:
                 return response
-                # parsed = [Person.wrap(r) for r in response]
-                # return parsed
             return []
         except Exception as ex:
             print(f'x exception: {ex}')
@@ -57,15 +54,13 @@ class PeopleService():
         '''Fetch all people who share the same manager as current person'''
 
         try:
-            print(f'> fetch_team context: {dir(context)}')
-            person = self.fetch(context.id)
-            matcher = GraphContext().get_relationship_matcher
-            response = list(matcher.match(nodes='Person', r_type='MANAGES')
-                            .where(f"_.id = {context.id}")
-                            .order_by("_.firstname"))
+            person = self.fetch(id=context.id)
+            print(f'> person: {person}')
+            r_matcher = GraphContext().get_relationship_matcher
+            response = list(r_matcher.match(r_type='MANAGES'))
+            print(f'> response: {help(response[0].nodes)} = {response[0].nodes}')
             if len(response) > 0:
-                parsed = [Person.wrap(r) for r in response]
-                return parsed
+                return [r.nodes for r in response]
             return []
         except Exception as ex:
             print(f'x exception: {ex}')
@@ -76,11 +71,10 @@ class PeopleService():
 
         try:
             matcher = GraphContext().get_relationship_matcher
-            response = list(matcher.match(
-                'Person', 'MANAGES').order_by("_.firstname"))
+            response = list(matcher.match('Person', 'MANAGES')
+            .order_by("_.firstname"))
             if len(response) > 0:
-                parsed = [Person.wrap(r) for r in response]
-                return parsed
+                return response[0]
             return []
         except Exception as ex:
             print(f'x exception: {ex}')
