@@ -79,3 +79,15 @@ class PeopleService():
         except Exception as ex:
             print(f'x exception: {ex}')
             return []
+
+    def fetch_x(self, query, params):
+        '''
+        Fetch X, use cyper queries
+        '''
+
+        try:
+            response = GraphContext().graph_cypher_exec(query, **params)
+            # [r for r in response]
+        except Exception as ex:
+            print(f'x exception: {ex}')
+            return []
