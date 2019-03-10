@@ -1,7 +1,8 @@
 import graphene
 
 from .models import Customer, Store, Receipt, Product
-from app.People.schema import PeopleQuery, PeopleMutations
+# from app.People.schema import PeopleQuery, PeopleMutations
+from app.Search.schema import SearchQuery
 
 
 class ProductSchema(graphene.ObjectType):
@@ -128,4 +129,5 @@ class Mutations(graphene.ObjectType):
 
 
 # schema = graphene.Schema(query=Query, mutation=Mutations, auto_camelcase=True)
-schema = graphene.Schema(query=PeopleQuery, mutation=PeopleMutations, auto_camelcase=True)
+# schema = graphene.Schema(query=PeopleQuery, mutation=PeopleMutations, auto_camelcase=True)
+schema = graphene.Schema(query=SearchQuery, auto_camelcase=True)

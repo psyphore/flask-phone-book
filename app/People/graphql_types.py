@@ -18,6 +18,7 @@ class Character(graphene.Interface):
     mobile = graphene.String()
     email = graphene.String(required=True)
 
+    line = graphene.List(lambda: Character)
     team = graphene.List(lambda: Character)
     manager = graphene.Field(lambda: Character)
 
@@ -51,37 +52,22 @@ class PersonType(graphene.ObjectType):
     location = graphene.List(lambda: graphene.String)
 
     def resolve_team(self, info, **args):
-        return [PersonType(**member.as_dict()) for member in service.fetch_team(context=self)]
+        return [PersonType(**Person.wrap(member).as_dict()) for member in service.fetch_team(person=self)]
+
+    def resolve_line(self, info, **args):
+        return [PersonType(**Person.wrap(member).as_dict()) for member in service.fetch_line(person=self)]
 
     def resolve_manager(self, info, **args):
-        pass
-        # person = args.get("")
-        # return [PersonType(**manager.as_dict()) for manager in service.fetch_manager(context=self)]
+        manager = service.fetch_manager(person=self)
+        if manager is not None:
+            return PersonType(**Person.wrap(manager).as_dict())
+        return None
 
     def resolve_products(self, info, **args):
-        # return [ProductSchema(**product.as_dict()) for product in self.customer.products]
         pass
 
     def resolve_location(self, info, **args):
         pass
-
-
-class SearchType(graphene.InputObjectType):
-    '''Search, 
-        :query, your search phrase
-        :first, how many are you fetching in a set
-        :offest, number to offset by a set
-    '''
-    class Arguments:
-        query = graphene.String(required=True)
-        first = graphene.Int(10)
-        offset = graphene.Int(0)
-
-class SearchResultType(graphene.ObjectType):
-    '''Search Result, containing a count of items contained in the items member'''
-
-    count = graphene.Int(0)
-    data = graphene.List(lambda: PersonType)
 
 
 class CreatePerson(graphene.Mutation):

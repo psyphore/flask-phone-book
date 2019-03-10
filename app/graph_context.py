@@ -29,8 +29,9 @@ class GraphContext(object):
     return RelationshipMatcher(graph=self.get_instance)
 
   @staticmethod
-  def exec_cypher(self, query, **kwargs):
-    return self.get_instance.evaluate(query, **kwargs)
+  def exec_cypher(query, **kwargs):
+    instance = Graph(f"bolt://{settings.NEO4J_HOST}:{settings.NEO4J_BOLT_PORT}", auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD))
+    return instance.run(query, **kwargs).data()
 
   @staticmethod
   def exec_transaction(self, query, **kwargs):

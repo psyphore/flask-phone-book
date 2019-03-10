@@ -1,15 +1,9 @@
-def get_person_query(name,first,skip):
+def filter_person_query(name, skip, first):
   return '''
   OPTIONAL MATCH (p:Person)
-  WHERE p.firstname =~ '{name}'.*
-  RETURN p
-  SKIP {skip}
-  LIMIT {first}
-  '''.replace('{skip}', skip).replace('{name}',name).replace('{first}',first)
-
-def get_person_by_id_query(id):
-  return '''
-  OPTIONAL MATCH (p:Person{id:$id})
+  WHERE p.firstname =~ '(?i){name}.*'
+    OR p.lastname =~ '(?i){name}.*'
+    OR p.title =~ '(?i).*{name}.*'
   RETURN p { 
   .firstname,
   .mobile,
@@ -26,4 +20,7 @@ def get_person_by_id_query(id):
   products: [(p)-[:KNOWS]->(pr) | pr],
   building: [(p)-[:BASED_IN]->(b) | b]
   } AS person
-  '''.replace('$id', id)
+  ORDER BY person.lastname ASC, person.firstname ASC
+  SKIP {skip}
+  LIMIT {first}
+  '''.replace('{name}',name).replace('{skip}',skip).replace('{first}',first)

@@ -3,7 +3,8 @@ from graphql import GraphQLError
 
 from .models import Person
 from .service import PeopleService
-from .graphql_types import Character, TeamType, ProductType, PersonType, SearchResultType, CreatePerson
+from .graphql_types import Character, TeamType, ProductType, PersonType, CreatePerson
+from app.Search.graphql_types import SearchResultType
 
 service = PeopleService()
 
@@ -12,14 +13,14 @@ class PeopleQuery(graphene.ObjectType):
 
     person = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
     people = graphene.List(lambda: PersonType, limit=graphene.Int(10))
-    search = graphene.Field(SearchResultType, query=graphene.NonNull(graphene.String), limit=graphene.Int(10))
+    me = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
 
     def resolve_person(self, info, **args):
         identity = args.get("id")
         person = service.fetch(id=identity)
         if person is None:
             raise GraphQLError(
-                f'"{identity}" has not been found in our customers list.')
+                f'"{identity}" has not been found in our people list.')
 
         return PersonType(**Person.wrap(person).as_dict())
 
@@ -31,18 +32,14 @@ class PeopleQuery(graphene.ObjectType):
 
         return [PersonType(**Person.wrap(p).as_dict()) for p in people]
 
-    def resolve_search(self, info, **args):
-        q, l = args.get("query"), args.get("limit")
-        result = service.filter(query=q,limit=l)
+    def resolve_me(self, info, **args):
+        identity = args.get("id")
+        person = service.fetch(id=identity)
+        if person is None:
+            raise GraphQLError(
+                f'"{identity}" has not been found in our people list.')
 
-        if result is None:
-            raise GraphQLError(f'"{q}" has not been found in our customers list.')
-
-        sr = SearchResultType()
-        sr.count = len(result)
-        sr.data = [PersonType(**Person.wrap(r).as_dict()) for r in result]
-
-        return sr
+        return PersonType(**Person.wrap(person).as_dict())
 
 
 class PeopleMutations(graphene.ObjectType):

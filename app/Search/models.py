@@ -1,8 +1,8 @@
 from py2neo.ogm import GraphObject, Property, RelatedTo
 
-class Person(GraphObject):
+class Search(GraphObject):
     '''
-    Person object, this represent a person entity nad his relationships to other entities
+    Search object, this represent a person entity nad his relationships to other entities
     '''
 
     id = Property()
@@ -15,8 +15,6 @@ class Person(GraphObject):
     knownAs = Property()
     avatar = Property()
 
-    # products = RelatedTo('Product', 'KNOWS')
-    # building = RelatedTo('Building', 'BASED_IN')
     team = RelatedTo('Person')
     manager = RelatedTo('Person', 'MANAGES')
 
@@ -30,9 +28,7 @@ class Person(GraphObject):
             'email': self.email,
             'bio': self.bio,
             'knownAs': self.knownAs,
-            'avatar': self.avatar,
-            'team': self.team,
-            'manager': self.manager
+            'avatar': self.avatar
         }
 
     def __str__(self):
