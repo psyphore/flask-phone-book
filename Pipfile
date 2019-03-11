@@ -11,16 +11,15 @@ flask-graphql = {editable = true,version = "*"}
 maya = "*"
 environs = "*"
 flask-migrate = "*"
-goole-api-python-client = "*"
 pyopenssl = "*"
 pytz = {editable = true,version = "*"}
-google-api-python-client = {editable = true,version = "*"}
 
 [dev-packages]
 ipdb = "*"
 "flake8" = "*"
 autopep8 = {editable = true,version = "*"}
 pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.7"
