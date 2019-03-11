@@ -1,8 +1,8 @@
 import graphene
 
 from .models import Customer, Store, Receipt, Product
-# from app.People.schema import PeopleQuery, PeopleMutations
-from app.Search.schema import SearchQuery
+import app.People.schema
+import app.Search.schema
 
 
 class ProductSchema(graphene.ObjectType):
@@ -128,6 +128,16 @@ class Mutations(graphene.ObjectType):
     submit_receipt = SubmitReceipt.Field()
 
 
-# schema = graphene.Schema(query=Query, mutation=Mutations, auto_camelcase=True)
-# schema = graphene.Schema(query=PeopleQuery, mutation=PeopleMutations, auto_camelcase=True)
-schema = graphene.Schema(query=SearchQuery, auto_camelcase=True)
+class SuperQuery(app.People.schema.PeopleQuery,
+                 app.Search.schema.SearchQuery,
+                 graphene.ObjectType):
+    pass
+
+
+class SuperMutant(app.People.schema.PeopleMutations,
+                  graphene.ObjectType):
+    pass
+
+
+schema = graphene.Schema(
+    query=SuperQuery, mutation=SuperMutant, auto_camelcase=True)
