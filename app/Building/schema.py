@@ -1,50 +1,39 @@
 import graphene
 from graphql import GraphQLError
 
-from .models import Person
-from .service import PeopleService
-from .graphql_types import Character, TeamType, ProductType, PersonType, CreatePerson
-from app.Search.graphql_types import SearchResultType
+from .models import Building
+from .service import BuildingService
+from .graphql_types import BuildingType
 
-service = PeopleService()
+service = BuildingService()
 
-class PeopleQuery(graphene.ObjectType):   
-    '''People Query, fetch person entries matching to provided criteria'''
 
-    person = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
-    people = graphene.List(lambda: PersonType, limit=graphene.Int(10))
-    me = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
+class BuidlingQuery(graphene.ObjectType):
+    '''Buidling Query, fetch building entries matching to provided criteria'''
 
-    def resolve_person(self, info, **args):
+    building = graphene.Field(
+        BuildingType, id=graphene.ID(), name=graphene.String())
+    buildings = graphene.Field(lambda: BuildingType, limit=graphene.Int(5))
+
+    def resolve_building(self, info, **args):
         identity = args.get("id")
-        person = service.fetch(id=identity)
-        if person is None:
+        name = args.get("name")
+        building = service.fetch(id=identity, name=name)
+        if building is None:
             raise GraphQLError(
-                f'"{identity}" has not been found in our people list.')
+                f'"{identity}" has not been found in our building listing.')
 
-        return PersonType(**Person.wrap(person).as_dict())
+        return BuildingType(**Building.wrap(building).as_dict())
 
-    def resolve_people(self, info, **args):
-        l = args.get("limit")
-        people = service.fetch_all(limit=l)
-        if people is None:
-            raise GraphQLError('we did not find any people, please populate first.')
+    def resolve_buildings(self, info, **args):
+        print(f's_rbs > {args}')
+        limit = args.get("limit")
+        buildings = service.fetch_all(limit=limit)
+        if buildings is None or len(buildings) is 0:
+            raise GraphQLError(f'no building listings found.')
 
-        return [PersonType(**Person.wrap(p).as_dict()) for p in people]
-
-    def resolve_me(self, info, **args):
-        identity = args.get("id")
-        person = service.fetch(id=identity)
-        if person is None:
-            raise GraphQLError(
-                f'"{identity}" has not been found in our people list.')
-
-        return PersonType(**Person.wrap(person).as_dict())
+        return [BuildingType(**Building.wrap(building).as_dict()) for building in buildings]
 
 
-class PeopleMutations(graphene.ObjectType):
-    create_person = CreatePerson.Field()
-    # submit_receipt = SubmitReceipt.Field()
-
-
-schema = graphene.Schema(query=PeopleQuery, mutation=None, auto_camelcase=True, types=[PersonType, SearchResultType])
+schema = graphene.Schema(
+    query=BuidlingQuery, auto_camelcase=True, types=[BuildingType])

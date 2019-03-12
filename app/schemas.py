@@ -3,6 +3,7 @@ import graphene
 from .models import Customer, Store, Receipt, Product
 import app.People.schema
 import app.Search.schema
+import app.Building.schema
 
 
 class ProductSchema(graphene.ObjectType):
@@ -130,6 +131,7 @@ class Mutations(graphene.ObjectType):
 
 class SuperQuery(app.People.schema.PeopleQuery,
                  app.Search.schema.SearchQuery,
+                 app.Building.schema.BuidlingQuery,
                  graphene.ObjectType):
     pass
 
