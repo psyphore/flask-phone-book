@@ -3,7 +3,7 @@ from graphql import GraphQLError
 
 from .models import Person
 from .service import PeopleService
-from .graphql_types import Character, ProductType, PersonType, CreatePerson
+from .graphql_types import Character, ProductType, PersonType, CreatePerson, UpdatePerson
 from app.Search.graphql_types import SearchResultType
 
 service = PeopleService()
@@ -17,9 +17,9 @@ class PeopleQuery(graphene.ObjectType):
     people = graphene.List(lambda: PersonType, limit=graphene.Int(10))
     me = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
 
-    def resolve_person(self, info, **args):
-        identity = args.get("id")
-        person = service.fetch(id=identity)
+    def resolve_person(self, info, id):
+        identity = id
+        person = service.fetch(id=identity)[0]
         if person is None:
             raise GraphQLError(
                 f'"{identity}" has not been found in our people list.')
@@ -50,7 +50,7 @@ class PeopleMutations(graphene.ObjectType):
         update an existing person object
     '''
     create_person = CreatePerson.Field()
-    update_person = CreatePerson.Field()
+    update_person = UpdatePerson.Field()
 
 
-schema = graphene.Schema(query=PeopleQuery, mutation=PeopleMutations, auto_camelcase=True, types=[PersonType])
+schema = graphene.Schema(query=PeopleQuery, mutation=PeopleMutations, auto_camelcase=True)

@@ -3,7 +3,6 @@ from py2neo.ogm import Node
 
 from app.graph_context import GraphContext
 
-from .models import Person
 from .cypher_queries import get_person_by_id_query
 
 
@@ -12,22 +11,13 @@ class PeopleService():
     This People Service houses all the actions can be performed against the person object
     '''
 
-    person = None
-
-    def __init__(self):
-        self.person = Person()
-
     def fetch(self, id):
         '''Fetch a single person with matching id'''
 
         try:
-            value = GraphContext().exec_cypher(get_person_by_id_query(id), id=id)
-            print(f'{value}')
-            return value
-            # matcher = GraphContext().get_node_matcher
-            # return matcher.match('Person', id=id).first()
+            return [Node.cast(node.values()) for node in GraphContext().exec_cypher(get_person_by_id_query(id))]
         except Exception as ex:
-            print(f'x exception: {ex}')
+            print(f'ps_f X exception: {ex}')
             return None
 
     def fetch_all(self, limit=100):
@@ -39,16 +29,21 @@ class PeopleService():
                 "_.firstname").limit(limit))
             return response
         except Exception as ex:
-            print(f'x exception: {ex}')
+            print(f'ps_fa X exception: {ex}')
             return []
 
     def fetch_team(self, person):
         '''Fetch all people who share the same manager as current person'''
 
+        items = None
         try:
-            items = [item for item in person.team.node.get("team")]
+            team = person.team.node.get("team")
+            if team is not None:
+                items = [member for member in team]
+
             if items is not None:
                 return items
+
             return []
         except Exception as ex:
             print(f'ps_ft X exception: {ex}')
@@ -56,11 +51,15 @@ class PeopleService():
 
     def fetch_line(self, person):
         '''Fetch all people who report the current person'''
-
+        items = None
         try:
-            items = [item for item in person.team.node.get("line")]
+            lines = person.team.node.get("line")
+            if lines is not None:
+                items = [item for item in lines]
+
             if items is not None:
                 return items
+                
             return []
         except Exception as ex:
             print(f'ps_fl X exception: {ex}')
@@ -76,16 +75,4 @@ class PeopleService():
             return None
         except Exception as ex:
             print(f'ps_fm X exception: {ex}')
-            return []
-
-    def fetch_x(self, query, params):
-        '''
-        Fetch X, use cyper queries
-        '''
-
-        try:
-            response = GraphContext().graph_cypher_exec(query, **params)
-            # [r for r in response]
-        except Exception as ex:
-            print(f'x exception: {ex}')
             return []

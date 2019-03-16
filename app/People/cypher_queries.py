@@ -9,7 +9,7 @@ def get_person_query(name,first,skip):
 
 def get_person_by_id_query(id):
   return '''
-  OPTIONAL MATCH (p:Person{id:$id})
+  OPTIONAL MATCH (p:Person{id:"$id"})
   RETURN p { 
   .firstname,
   .mobile,
