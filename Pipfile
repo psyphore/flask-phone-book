@@ -13,6 +13,8 @@ environs = "*"
 flask-migrate = "*"
 pyopenssl = "*"
 pytz = {editable = true,version = "*"}
+flask-jwt-extended = "*"
+passlib = "*"
 
 [dev-packages]
 ipdb = "*"

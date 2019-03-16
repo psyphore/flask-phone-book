@@ -15,7 +15,7 @@ class PeopleQuery(graphene.ObjectType):
 
     person = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
     people = graphene.List(lambda: PersonType, limit=graphene.Int(10))
-    me = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
+    me = graphene.Field(PersonType)
 
     def resolve_person(self, info, id):
         identity = id
@@ -35,6 +35,7 @@ class PeopleQuery(graphene.ObjectType):
         return [PersonType(**Person.wrap(p).as_dict()) for p in people]
 
     def resolve_me(self, info, **args):
+        print(f's_rm > self: {self} \n info: {info} \n args: {args}')
         identity = args.get("id")
         person = service.fetch(id=identity)
         if person is None:

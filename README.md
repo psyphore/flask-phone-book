@@ -21,7 +21,7 @@ My 1st take at Python, Flask, GraphQL, Neo4J
 1. from clean install without pipenv
 
 ```shell
- > python install pipenv Flask Graphene py2neo
+ > python install pipenv Flask Graphene py2neo flask-jwt-extended passlib
 ```
 
 1. with pipenv installed already
@@ -30,6 +30,8 @@ My 1st take at Python, Flask, GraphQL, Neo4J
  > pipenv shell
  > pipenv install
  > flask run
+ or
+ > FLASK_APP=run.py flask run
 ```
 
 ## Environment Settings
