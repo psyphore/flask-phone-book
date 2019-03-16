@@ -15,6 +15,7 @@ pyopenssl = "*"
 pytz = {editable = true,version = "*"}
 flask-jwt-extended = "*"
 passlib = "*"
+flask-graphql-auth = "*"
 
 [dev-packages]
 ipdb = "*"

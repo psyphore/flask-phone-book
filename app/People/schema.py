@@ -1,5 +1,6 @@
 import graphene
 from graphql import GraphQLError
+from flask_graphql_auth import (get_jwt_identity,get_raw_jwt,query_jwt_required)
 
 from .models import Person
 from .service import PeopleService
@@ -34,7 +35,8 @@ class PeopleQuery(graphene.ObjectType):
 
         return [PersonType(**Person.wrap(p).as_dict()) for p in people]
 
-    def resolve_me(self, info, **args):
+    @query_jwt_required
+    def resolve_me2(self, info, **args):
         print(f's_rm > self: {self} \n info: {info} \n args: {args}')
         identity = args.get("id")
         person = service.fetch(id=identity)
@@ -43,6 +45,16 @@ class PeopleQuery(graphene.ObjectType):
                 f'"{identity}" has not been found in our people list.')
 
         return PersonType(**Person.wrap(person).as_dict())
+
+    # @query_jwt_required
+    def resolve_me(self, info):
+        print(f's_rm > self: {self} \n info: {info} \n options: {dir(info)}')
+        pass
+        # user = info.context.user
+        # if user.is_anonymous:
+        #     raise GraphQLError('Not logged in!')
+
+        # return user
 
 
 class PeopleMutations(graphene.ObjectType):

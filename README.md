@@ -14,6 +14,9 @@ My 1st take at Python, Flask, GraphQL, Neo4J
   1. [graphene-python - django](https://docs.graphene-python.org/projects/django/en/latest/)
   1. [flask + graphql - medium](https://medium.com/@marvinkome/creating-a-graphql-server-with-flask-ae767c7e2525)
 1. [Google Calendar API sample](https://bitbucket.org/kingmray/django-google-calendar/src/3856538e28822c5ffaba39a3258a9e833ffe413a/calendar_api/calendar_api.py?at=master&fileviewer=file-view-default)
+1. [Flask + JWT](https://codeburst.io/jwt-authorization-in-flask-c63c1acf4eeb)
+1. [How to GraphQL](https://www.howtographql.com/graphql-python)
+1. [Flask + GraphQL + JWT](https://media.readthedocs.org/pdf/flask-graphql-auth/latest/flask-graphql-auth.pdf)
 
 
 ## Commands
@@ -21,7 +24,7 @@ My 1st take at Python, Flask, GraphQL, Neo4J
 1. from clean install without pipenv
 
 ```shell
- > python install pipenv Flask Graphene py2neo flask-jwt-extended passlib
+ > python install pipenv
 ```
 
 1. with pipenv installed already
@@ -32,6 +35,8 @@ My 1st take at Python, Flask, GraphQL, Neo4J
  > flask run
  or
  > FLASK_APP=run.py flask run
+ or
+ > python run.py
 ```
 
 ## Environment Settings
@@ -45,4 +50,8 @@ NEO4J_HTTP_PORT=7474
 NEO4J_BOLT_PORT=7687
 NEO4J_USER=username
 NEO4J_PASSWORD=password
+
+JWT_SECRET_KEY=super secret key
+JWT_REFRESH_EXP_LENGTH = 30
+JWT_ACCESS_EXP_LENGTH =10
 ```

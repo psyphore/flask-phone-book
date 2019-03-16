@@ -1,4 +1,6 @@
 import graphene
+from flask_graphql_auth import (query_jwt_required, mutation_jwt_refresh_token_required,
+mutation_jwt_required)
 
 from .models import Person
 from .service import PeopleService
@@ -70,6 +72,7 @@ class CreatePerson(graphene.Mutation):
     success = graphene.Boolean()
     person = graphene.Field(lambda: PersonType)
 
+    @mutation_jwt_required
     def mutate(self, info, **kwargs):
         person = Person(**kwargs)
         person.save()
@@ -92,6 +95,7 @@ class UpdatePerson(graphene.Mutation):
     success = graphene.Boolean()
     person = graphene.Field(lambda: PersonType)
 
+    @mutation_jwt_required
     def mutate(self, info, **kwargs):
         person = Person(**kwargs)
         person.save()

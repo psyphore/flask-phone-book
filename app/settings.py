@@ -14,3 +14,7 @@ NEO4J_HTTP_PORT = env.int('NEO4J_HTTP_PORT', default=7474)
 NEO4J_BOLT_PORT = env.int('NEO4J_BOLT_PORT', default=7687)
 NEO4J_USER = env('NEO4J_USER', default='neo4j')
 NEO4J_PASSWORD = env('NEO4J_PASSWORD', default='n4j')
+
+JWT_SECRET_KEY= env('JWT_SECRET_KEY', default='super secret key')
+JWT_REFRESH_EXP_LENGTH = env.int('JWT_REFRESH_EXP_LENGTH',default=30)
+JWT_ACCESS_EXP_LENGTH = env.int('JWT_ACCESS_EXP_LENGTH', default=10)
