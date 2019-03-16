@@ -8,7 +8,7 @@
       "name": "Python: Terminal (pipenv)",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/run.py",
+      "program": "pipenv shell && ${workspaceFolder}/run.py",
       "console": "integratedTerminal",
       "envFile": "${workspaceFolder}/.env"
     }

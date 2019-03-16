@@ -3,13 +3,15 @@ from graphql import GraphQLError
 
 from .models import Person
 from .service import PeopleService
-from .graphql_types import Character, TeamType, ProductType, PersonType, CreatePerson
+from .graphql_types import Character, ProductType, PersonType, CreatePerson
 from app.Search.graphql_types import SearchResultType
 
 service = PeopleService()
 
 class PeopleQuery(graphene.ObjectType):   
-    '''People Query, fetch person entries matching to provided criteria'''
+    '''People Query, 
+        fetch person entries matching to provided criteria
+    '''
 
     person = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
     people = graphene.List(lambda: PersonType, limit=graphene.Int(10))
@@ -43,8 +45,12 @@ class PeopleQuery(graphene.ObjectType):
 
 
 class PeopleMutations(graphene.ObjectType):
+    '''People Mutations, 
+        create new person object or 
+        update an existing person object
+    '''
     create_person = CreatePerson.Field()
-    # submit_receipt = SubmitReceipt.Field()
+    update_person = CreatePerson.Field()
 
 
-schema = graphene.Schema(query=PeopleQuery, mutation=None, auto_camelcase=True, types=[PersonType, SearchResultType])
+schema = graphene.Schema(query=PeopleQuery, mutation=PeopleMutations, auto_camelcase=True, types=[PersonType])

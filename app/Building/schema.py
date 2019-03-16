@@ -8,8 +8,8 @@ from .graphql_types import BuildingType
 service = BuildingService()
 
 
-class BuidlingQuery(graphene.ObjectType):
-    '''Buidling Query, fetch building entries matching to provided criteria'''
+class BuildingQuery(graphene.ObjectType):
+    '''Building Query, fetch building entries matching to provided criteria'''
 
     building = graphene.Field(
         BuildingType, id=graphene.ID(), name=graphene.String())
@@ -36,4 +36,4 @@ class BuidlingQuery(graphene.ObjectType):
 
 
 schema = graphene.Schema(
-    query=BuidlingQuery, auto_camelcase=True, types=[BuildingType])
+    query=BuildingQuery, auto_camelcase=True, types=[BuildingType])
