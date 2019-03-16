@@ -6,8 +6,12 @@
   "terminal.integrated.fontSize": 14,
   "editor.fontSize": 14,
   "editor.minimap.enabled": false,
+  "editor.autoIndent": true,
+  "editor.codeLens": true,
   "files.exclude": {
     "**/.git": true,
-    "**/__pycache__": true
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/coverage": true
   }
 }
