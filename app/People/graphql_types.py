@@ -1,9 +1,10 @@
 import graphene
-from flask_graphql_auth import (query_jwt_required, mutation_jwt_refresh_token_required,
-mutation_jwt_required)
+from flask_graphql_auth import (AuthInfoField, query_jwt_required, mutation_jwt_refresh_token_required, mutation_jwt_required)
 
 from .models import Person
 from .service import PeopleService
+import app.Building.graphql_types
+import app.Product.graphql_types
 
 service = PeopleService()
 
@@ -24,21 +25,14 @@ class Character(graphene.Interface):
     team = graphene.List(lambda: Character)
     manager = graphene.Field(lambda: Character)
 
-class ProductType(graphene.ObjectType):
-    id = graphene.ID()
-
-    name = graphene.String()
-    description = graphene.String()
-    date_updated = graphene.DateTime()
-
 class PersonType(graphene.ObjectType):
     '''Person Type, represents a GraphQL version of a person entity'''
 
     class Meta:
         interfaces = (Character,)
 
-    products = graphene.List(lambda: ProductType)
-    location = graphene.List(lambda: graphene.String)
+    products = graphene.List(lambda: app.Product.graphql_types.ProductType)
+    location = graphene.List(lambda: app.Building.graphql_types.BuildingType)
 
     def resolve_team(self, info, **args):
         return [PersonType(**Person.wrap(member).as_dict()) for member in service.fetch_team(person=self)]
@@ -57,6 +51,14 @@ class PersonType(graphene.ObjectType):
 
     def resolve_location(self, info, **args):
         pass
+
+class ProtectedPersonType(graphene.Union):
+    class Meta:
+        types = (PersonType, AuthInfoField)
+    
+    @classmethod
+    def resolve_type(cls, instance, info):
+        return type(instance)
 
 class CreatePerson(graphene.Mutation):
     class Arguments:

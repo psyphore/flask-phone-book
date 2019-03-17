@@ -4,7 +4,7 @@ from .models import Building
 from .service import BuildingService
 
 from app.People.models import Person
-from app.People.graphql_types import PersonType
+import app.People.graphql_types
 
 service = BuildingService()
 
@@ -18,7 +18,7 @@ class BuildingType(graphene.ObjectType):
     address = graphene.String(required=True)
     headcount = graphene.Int()
 
-    people = graphene.List(lambda: PersonType)
+    people = graphene.List(lambda: app.People.graphql_types.PersonType)
 
     def resolve_people(self, info, **args):
-        return [PersonType(**Person.wrap(member).as_dict()) for member in service.fetch_people(building=self)]
+        return [app.People.graphql_types.PersonType(**Person.wrap(member).as_dict()) for member in service.fetch_people(building=self)]

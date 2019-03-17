@@ -1,13 +1,21 @@
 import graphene
 from graphql import GraphQLError
-from flask_graphql_auth import (get_jwt_identity,get_raw_jwt,query_jwt_required)
+from flask_graphql_auth import (query_jwt_required)
 
+from app import utilities
 from .models import Person
 from .service import PeopleService
-from .graphql_types import Character, ProductType, PersonType, CreatePerson, UpdatePerson
-from app.Search.graphql_types import SearchResultType
+from .graphql_types import Character, PersonType, CreatePerson, UpdatePerson, ProtectedPersonType
 
 service = PeopleService()
+
+def person_resolver(identity):
+    person = service.fetch(id=identity)[0]
+    if person is None:
+        raise GraphQLError(
+            f'"{identity}" has not been found in our people list.')
+
+    return PersonType(**Person.wrap(person).as_dict())
 
 class PeopleQuery(graphene.ObjectType):   
     '''People Query, 
@@ -16,16 +24,10 @@ class PeopleQuery(graphene.ObjectType):
 
     person = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
     people = graphene.List(lambda: PersonType, limit=graphene.Int(10))
-    me = graphene.Field(PersonType)
+    me = graphene.Field(ProtectedPersonType)
 
     def resolve_person(self, info, id):
-        identity = id
-        person = service.fetch(id=identity)[0]
-        if person is None:
-            raise GraphQLError(
-                f'"{identity}" has not been found in our people list.')
-
-        return PersonType(**Person.wrap(person).as_dict())
+        return person_resolver(id)
 
     def resolve_people(self, info, **args):
         l = args.get("limit")
@@ -46,17 +48,12 @@ class PeopleQuery(graphene.ObjectType):
 
         return PersonType(**Person.wrap(person).as_dict())
 
-    # @query_jwt_required
     def resolve_me(self, info):
-        print(f's_rm > self: {self} \n info: {info.context.headers} \n options: {dir(info.context.headers)}')
         jwt = info.context.headers.get('Authorization')
-        
-        pass
-        # user = info.context.user
-        # if user.is_anonymous:
-        #     raise GraphQLError('Not logged in!')
-
-        # return user
+        decoded = utilities.get_user_info(jwt)
+        if decoded is not None:
+            return person_resolver(decoded)
+        return None
 
 
 class PeopleMutations(graphene.ObjectType):

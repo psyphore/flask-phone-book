@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_graphql import GraphQLView
 from flask_graphql_auth import GraphQLAuth
+from flask_jwt_extended import (JWTManager, jwt_required)
 
 from app import settings
 from app.graph_context import GraphContext
@@ -10,12 +11,15 @@ from .schemas import schema
 
 def create_app():
     app = Flask(__name__)
-
+    
     auth = GraphQLAuth(app)
     app.config["JWT_SECRET_KEY"] = settings.JWT_SECRET_KEY
     app.config["REFRESH_EXP_LENGTH"] = settings.JWT_REFRESH_EXP_LENGTH
     app.config["ACCESS_EXP_LENGTH"] = settings.JWT_ACCESS_EXP_LENGTH
-    app.config["JWT_TOKEN_ARGUMENT_NAME"] = "info.context.headers.Authorization"
+
+    jwt = JWTManager(app)
+    # print(f'> jwtm: {jwt} \n jwtm_options: {dir(jwt)}')
+    # print(f'> gqla: {auth} \n gqla_options: {dir(auth)}')
 
     app.add_url_rule('/graphql', 
     view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
