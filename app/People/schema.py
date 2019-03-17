@@ -48,7 +48,9 @@ class PeopleQuery(graphene.ObjectType):
 
     # @query_jwt_required
     def resolve_me(self, info):
-        print(f's_rm > self: {self} \n info: {info} \n options: {dir(info)}')
+        print(f's_rm > self: {self} \n info: {info.context.headers} \n options: {dir(info.context.headers)}')
+        jwt = info.context.headers.get('Authorization')
+        
         pass
         # user = info.context.user
         # if user.is_anonymous:

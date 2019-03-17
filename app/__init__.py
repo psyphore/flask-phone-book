@@ -15,7 +15,7 @@ def create_app():
     app.config["JWT_SECRET_KEY"] = settings.JWT_SECRET_KEY
     app.config["REFRESH_EXP_LENGTH"] = settings.JWT_REFRESH_EXP_LENGTH
     app.config["ACCESS_EXP_LENGTH"] = settings.JWT_ACCESS_EXP_LENGTH
-    app.config["JWT_TOKEN_ARGUMENT_NAME"] = "info"
+    app.config["JWT_TOKEN_ARGUMENT_NAME"] = "info.context.headers.Authorization"
 
     app.add_url_rule('/graphql', 
     view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
