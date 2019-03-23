@@ -5,7 +5,7 @@ from app.utilities import (generate_hash, verify_hash, get_user_info, poor_mans_
 
 class TestCustomUtilities(unittest.TestCase):
     def setUp(self):
-        self.sample_jwt = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWRlbnRpZmllciI6ImEwZWNhMzlhLTRiZTEtNGMwMS04YzJkLWU3NDgxYWE5ZjllYSIsImlhdCI6MTUxNjIzOTAyMn0.ZC5eBKwLbm4f3_RPl_rBGdlmV3qeRbh0OLBaMdm-3qU'
+        self.sample_jwt = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTMzNjQ2MDEsIm5iZiI6MTU1MzM2NDYwMSwianRpIjoiNGNiODk1N2QtM2I0MS00N2M4LTlmN2ItNGMyODkwZTAzYjhhIiwiZXhwIjoxNTUzMzY1NTAxLCJpZGVudGl0eSI6ImEwZWNhMzlhLTRiZTEtNGMwMS04YzJkLWU3NDgxYWE5ZjllYSIsImZyZXNoIjpmYWxzZSwidHlwZSI6ImFjY2VzcyJ9.fruaZRq5khXChfrnw3PTDERXDveA-h20gJdvJIUpjS0'
         self.password = 'password_12345'
         self.incorrect_password = '12345_password'
         self.identity = '6cdbc440-9056-4470-9f98-e30cf43ab0f0'
@@ -35,6 +35,11 @@ class TestCustomUtilities(unittest.TestCase):
     @unittest.expectedFailure
     def test_create_tokens(self):
         data = create_tokens(identity=self.identity)
+        self.assertTrue(len(data) > 0)
+
+    @unittest.expectedFailure
+    def test_get_user_info(self):
+        data = get_user_info(token=self.sample_jwt)
         self.assertTrue(len(data) > 0)
 
     def tearDown(self):

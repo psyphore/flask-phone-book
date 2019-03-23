@@ -5,7 +5,7 @@ from flask_graphql_auth import (query_jwt_required)
 from app import utilities
 from .models import Person
 from .service import PeopleService
-from .graphql_types import Character, PersonType, CreatePerson, UpdatePerson, ProtectedPersonType
+from .graphql_types import Character, PersonType, CreatePerson, UpdatePerson, ProtectedPersonType, Authenticate
 
 service = PeopleService()
 
@@ -24,7 +24,7 @@ class PeopleQuery(graphene.ObjectType):
 
     person = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
     people = graphene.List(lambda: PersonType, limit=graphene.Int(10))
-    me = graphene.Field(ProtectedPersonType)
+    me = graphene.Field(lambda: ProtectedPersonType)
 
     def resolve_person(self, info, id):
         return person_resolver(id)
@@ -37,23 +37,14 @@ class PeopleQuery(graphene.ObjectType):
 
         return [PersonType(**Person.wrap(p).as_dict()) for p in people]
 
-    # @query_jwt_required
-    def resolve_me2(self, info, **args):
-        print(f's_rm > self: {self} \n info: {info} \n args: {args}')
-        identity = args.get("id")
-        person = service.fetch(id=identity)
-        if person is None:
-            raise GraphQLError(
-                f'"{identity}" has not been found in our people list.')
-
-        return PersonType(**Person.wrap(person).as_dict())
-
-    # @query_jwt_required
     def resolve_me(self, info):
-        jwt = info.context.headers.get('Authorization')
-        decoded = utilities.get_user_info(jwt)
+        decoded = utilities.get_user_info(info.context.headers.get('Authorization'))
         if decoded is not None:
-            return person_resolver(decoded)
+            person = service.fetch_protected(decoded)
+            if person is None:
+                raise GraphQLError('User not authorized.')
+            ppt = ProtectedPersonType(**person)
+            return ppt
         return None
 
 
@@ -64,6 +55,7 @@ class PeopleMutations(graphene.ObjectType):
     '''
     create_person = CreatePerson.Field()
     update_person = UpdatePerson.Field()
+    auth_person = Authenticate.Field()
 
 
 schema = graphene.Schema(query=PeopleQuery, mutation=PeopleMutations, auto_camelcase=True)

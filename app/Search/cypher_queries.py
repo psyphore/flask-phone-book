@@ -4,6 +4,7 @@ def filter_person_query(name, skip, first):
   WHERE p.firstname =~ '(?i){name}.*'
     OR p.lastname =~ '(?i){name}.*'
     OR p.title =~ '(?i).*{name}.*'
+    OR p.email =~ '(?i).*{name}.*'
   RETURN p { 
   .firstname,
   .mobile,

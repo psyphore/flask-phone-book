@@ -1,10 +1,13 @@
 import graphene
 from flask_graphql_auth import (AuthInfoField, query_jwt_required, mutation_jwt_refresh_token_required, mutation_jwt_required)
+from app.utilities import (create_tokens)
 
 from .models import Person
 from .service import PeopleService
 import app.Building.graphql_types
 import app.Product.graphql_types
+import app.People.graphql_types
+from app.Search.service import SearchService
 
 service = PeopleService()
 
@@ -52,13 +55,18 @@ class PersonType(graphene.ObjectType):
     def resolve_location(self, info, **args):
         pass
 
-class ProtectedPersonType(graphene.Union):
-    class Meta:
-        types = (PersonType, AuthInfoField)
-    
-    @classmethod
-    def resolve_type(cls, instance, info):
-        return type(instance)
+class ProtectedPersonType(graphene.ObjectType):
+    person = graphene.Field(lambda: Person)
+    leave_items = graphene.List(lambda: graphene.String)
+    salary_level = graphene.Int()
+    next_of_keen = graphene.String()
+    birth_date = graphene.Date()
+    employment_anniversary = graphene.Date()
+    authorization_key = graphene.String()
+
+class AuthorizationType(graphene.ObjectType):
+    access_token = graphene.String()
+    refresh_token = graphene.String()
 
 class CreatePerson(graphene.Mutation):
     class Arguments:
@@ -104,3 +112,22 @@ class UpdatePerson(graphene.Mutation):
 
         return UpdatePerson(person=person, success=True)
 
+class Authenticate(graphene.Mutation):
+    class Arguments:
+        email = graphene.String(required=True)
+        
+    success = graphene.Boolean()
+    authorization = graphene.Field(lambda: AuthorizationType)
+
+    def mutate(self, info, **kwargs):
+        criteria = kwargs.get('email')
+        search_svc = SearchService()
+
+        matched = [PersonType(**Person.wrap(m).as_dict()) for m in search_svc.filter(query=criteria,limit=1,skip=0)]
+        
+        if matched is not None and len(matched) > 0:
+            tokens = create_tokens(identity=matched[0].id)
+            payload = AuthorizationType(**tokens)
+            return Authenticate(authorization=payload, success=True)
+        
+        return Authenticate(authorization=None, success=False)

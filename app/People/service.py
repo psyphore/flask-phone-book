@@ -1,4 +1,4 @@
-import maya
+from maya import Datetime, when
 from py2neo.ogm import Node
 
 from app.graph_context import GraphContext
@@ -76,3 +76,21 @@ class PeopleService():
         except Exception as ex:
             print(f'ps_fm X exception: {ex}')
             return []
+
+    def fetch_protected(self, decoded):
+        '''Fetch a single person with matching decoded access token'''
+
+        try:
+            person = self.fetch(decoded.get('identity'))
+            return {
+                'person': person[0],
+                'leave_items': [str(f'> leave item # {x}') for x in range(0, 10)],
+                'authorization_key':decoded.get('jti'),
+                'salary_level': 4,
+                'birth_date' : Datetime(1987,3,9),
+                'next_of_keen' : 'Spouse',
+                'employment_anniversary' : Datetime(2018,1,4)
+            }
+        except Exception as ex:
+            print(f'ps_f X exception: {ex}')
+            return None

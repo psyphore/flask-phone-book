@@ -15,7 +15,6 @@ def get_user_info(token):
   token = str(token).strip().replace('Bearer ', '')
   if token is not None:
     decoded = decode_token(encoded_token=token,allow_expired=True)
-    print(f'i_gui > decoded: {decoded}')
     if decoded is not None:
       return decoded
   return None
