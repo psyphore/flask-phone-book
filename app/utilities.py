@@ -1,5 +1,6 @@
-from flask_jwt_extended import (create_access_token, create_refresh_token)
-from flask_graphql_auth import (get_jwt_identity, get_raw_jwt, decode_jwt, get_jwt_data)
+from base64 import (b64decode, standard_b64decode, urlsafe_b64decode)
+from json import (dump, dumps)
+from flask_jwt_extended import (create_access_token, create_refresh_token, decode_token)
 from passlib.hash import pbkdf2_sha256 as sha256
 
 from app import settings
@@ -13,12 +14,18 @@ def verify_hash(password, hash):
 def get_user_info(token):
   token = str(token).strip().replace('Bearer ', '')
   if token is not None:
-    # decoded = get_jwt_data(token=token, token_type='access')
-    # decoded = decode_jwt(token, settings.JWT_SECRET_KEY, 'HS256', 'identity', None)
-    decoded = token
+    decoded = decode_token(encoded_token=token,allow_expired=True)
     print(f'i_gui > decoded: {decoded}')
-    return decoded
+    if decoded is not None:
+      return decoded
   return None
+
+def poor_mans_token_parser(token):
+  token = str(token).strip().replace('Bearer ', '')
+  b64_parts = token.split('.')
+  b64 = b64_parts[1]#.replace('-','+').replace('_','/')
+  decoded = urlsafe_b64decode(b64) #standard_b64decode(b64)
+  return dump(decoded)
   
 def create_tokens(identity):
   if str(identity).strip() is not None:

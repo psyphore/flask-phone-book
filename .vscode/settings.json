@@ -8,10 +8,18 @@
   "editor.minimap.enabled": false,
   "editor.autoIndent": true,
   "editor.codeLens": true,
+  "editor.fontFamily": "Fira Code",
+  "workbench.editor.showTabs": true,
+  "breadcrumbs.enabled": true,
+  "window.zoomLevel": 0.75,
+  "editor.formatOnSave": true,
   "files.exclude": {
     "**/.git": true,
     "**/__pycache__": true,
     "**/.pytest_cache": true,
     "**/coverage": true
-  }
+  },
+  "[python]": {
+    "editor.tabSize": 2
+  },
 }

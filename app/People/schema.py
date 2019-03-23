@@ -37,7 +37,7 @@ class PeopleQuery(graphene.ObjectType):
 
         return [PersonType(**Person.wrap(p).as_dict()) for p in people]
 
-    @query_jwt_required
+    # @query_jwt_required
     def resolve_me2(self, info, **args):
         print(f's_rm > self: {self} \n info: {info} \n args: {args}')
         identity = args.get("id")
@@ -48,6 +48,7 @@ class PeopleQuery(graphene.ObjectType):
 
         return PersonType(**Person.wrap(person).as_dict())
 
+    # @query_jwt_required
     def resolve_me(self, info):
         jwt = info.context.headers.get('Authorization')
         decoded = utilities.get_user_info(jwt)
