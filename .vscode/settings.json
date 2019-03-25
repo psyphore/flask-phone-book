@@ -1,6 +1,6 @@
 {
-  "python.pythonPath": "C:\\Users\\Epic Child\\.virtualenvs\\flask-phone-book-S3sb-Ql_\\Scripts\\python.exe",
-  // "python.pythonPath": "C:\\Users\\Siphoh\\.virtualenvs\\flask-phone-book-bYA8YDdA\\Scripts\\python.exe",
+  // "python.pythonPath": "C:\\Users\\Epic Child\\.virtualenvs\\flask-phone-book-S3sb-Ql_\\Scripts\\python.exe",
+  "python.pythonPath": "C:\\Users\\Siphoh\\.virtualenvs\\flask-phone-book-bYA8YDdA\\Scripts\\python.exe",
   "python.linting.enabled": true,
   "python.unitTest.autoTestDiscoverOnSaveEnabled": true,
   "terminal.integrated.fontSize": 14,
@@ -21,5 +21,5 @@
   },
   "[python]": {
     "editor.tabSize": 2
-  },
+  }
 }
