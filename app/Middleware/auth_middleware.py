@@ -3,7 +3,6 @@ class AuthMiddleware(object):
     self.app = app
 
   def __call__(self, environ, start_response):
-    print('-----------------')
-    print('Auth Function called')
-    print('-----------------')
+    print('----Auth Function called----')
+    print(f'> token: {environ.get("HTTP_AUTHORIZATION")}')
     return self.app(environ, start_response)

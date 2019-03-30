@@ -26,8 +26,6 @@ def create_app():
 
     # setup Json Web Token Manager to the app pipeline
     jwt = JWTManager(app)
-    # print(f'> jwtm: {jwt} \n jwtm_options: {dir(jwt)}')
-    # print(f'> gqla: {auth} \n gqla_options: {dir(auth)}')
 
     app.add_url_rule('/graphql',
                      view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
@@ -35,6 +33,14 @@ def create_app():
     # @app.teardown_appcontext
     # def shutdown_session(exception=None):
     #     print('> need to kill the graph_instance context')
+
+    @app.errorhandler(400)
+    def bad_request(e):
+        return jsonify({'message':'The request is not authenticated or unauthorized.'}), 400
+
+    @app.errorhandler(403)
+    def unauthorized(e):
+        return jsonify({'message':'The request is not authenticated or unauthorized.'}), 403
 
     #  add global 404 handler
     @app.errorhandler(404)
