@@ -5,5 +5,5 @@ class ProductType(graphene.ObjectType):
 
     name = graphene.String()
     description = graphene.String()
-    date_updated = graphene.DateTime()
+    category = graphene.String()
 

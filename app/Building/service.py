@@ -12,8 +12,6 @@ class BuildingService():
     This Building Service houses all the actions can be performed against the building object
     '''
 
-    building = None
-
     def __init__(self):
         self.building = Building()
 

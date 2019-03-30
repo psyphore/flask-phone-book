@@ -12,7 +12,7 @@
   "workbench.editor.showTabs": true,
   "breadcrumbs.enabled": true,
   "window.zoomLevel": 0.75,
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "files.exclude": {
     "**/.git": true,
     "**/__pycache__": true,

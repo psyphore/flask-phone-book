@@ -11,7 +11,6 @@ from app.Search.service import SearchService
 
 service = PeopleService()
 
-
 class Character(graphene.Interface):
     id = graphene.ID(required=True)
 
@@ -56,7 +55,7 @@ class PersonType(graphene.ObjectType):
         pass
 
 class ProtectedPersonType(graphene.ObjectType):
-    person = graphene.Field(lambda: Person)
+    person = graphene.Field(lambda: PersonType)
     leave_items = graphene.List(lambda: graphene.String)
     salary_level = graphene.Int()
     next_of_keen = graphene.String()
@@ -65,6 +64,7 @@ class ProtectedPersonType(graphene.ObjectType):
     authorization_key = graphene.String()
 
 class AuthorizationType(graphene.ObjectType):
+    id_token = graphene.String()
     access_token = graphene.String()
     refresh_token = graphene.String()
 
@@ -82,7 +82,7 @@ class CreatePerson(graphene.Mutation):
     success = graphene.Boolean()
     person = graphene.Field(lambda: PersonType)
 
-    @mutation_jwt_required
+    # @mutation_jwt_required
     def mutate(self, info, **kwargs):
         person = Person(**kwargs)
         person.save()
@@ -105,7 +105,7 @@ class UpdatePerson(graphene.Mutation):
     success = graphene.Boolean()
     person = graphene.Field(lambda: PersonType)
 
-    @mutation_jwt_required
+    # @mutation_jwt_required
     def mutate(self, info, **kwargs):
         person = Person(**kwargs)
         person.save()
@@ -126,8 +126,7 @@ class Authenticate(graphene.Mutation):
         matched = [PersonType(**Person.wrap(m).as_dict()) for m in search_svc.filter(query=criteria,limit=1,skip=0)]
         
         if matched is not None and len(matched) > 0:
-            tokens = create_tokens(identity=matched[0].id)
-            payload = AuthorizationType(**tokens)
+            payload = AuthorizationType(**create_tokens(identity=matched[0].id))
             return Authenticate(authorization=payload, success=True)
         
         return Authenticate(authorization=None, success=False)

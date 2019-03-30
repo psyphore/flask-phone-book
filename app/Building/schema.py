@@ -9,7 +9,10 @@ service = BuildingService()
 
 
 class BuildingQuery(graphene.ObjectType):
-    '''Building Query, fetch building entries matching to provided criteria'''
+    '''
+        Building Query, 
+        fetch building entries matching to provided criteria
+    '''
 
     building = graphene.Field(
         BuildingType, id=graphene.ID(), name=graphene.String())

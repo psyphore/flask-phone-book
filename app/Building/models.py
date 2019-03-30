@@ -1,24 +1,20 @@
-from py2neo.ogm import GraphObject, Property, RelatedTo
+from py2neo.ogm import GraphObject, Property
 
 class Building(GraphObject):
     '''
-    Building object, this represent a building/location entity nad his relationships to other entities
+    Building object, 
+        this represent a building or location entity
     '''
 
     id = Property()
     name = Property()
     address = Property()
-    headcount = Property()
-    
-    people = RelatedTo('Person')
     
     def as_dict(self):
         return {
             'id': self.id,
             'name': self.name,
-            'address': self.address,
-            'headcount': self.headcount,
-            'people': self.people
+            'address': self.address
         }
 
     def __str__(self):

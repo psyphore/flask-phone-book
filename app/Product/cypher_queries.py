@@ -1,29 +1,17 @@
-def get_person_query(name,first,skip):
+def get_product_query(name,first,skip):
   return '''
-  OPTIONAL MATCH (p:Person)
-  WHERE p.firstname =~ '{name}'.*
+  OPTIONAL MATCH (p:Product)
+  WHERE p.name =~ '{name}'.*
   RETURN p
   SKIP {skip}
   LIMIT {first}
   '''.replace('{skip}', skip).replace('{name}',name).replace('{first}',first)
 
-def get_person_by_id_query(id):
+def get_product_by_id_query(id):
   return '''
-  OPTIONAL MATCH (p:Person{id:$id})
+  OPTIONAL MATCH (p:Product{id:$id})
   RETURN p { 
-  .firstname,
-  .mobile,
-  .bio,
-  .id,
-  .title,
-  .email,
-  .lastname,
-  .avatar,
-  .knownAs,
-  manager: apoc.cypher.runFirstColumn("MATCH (m)-[:MANAGES]->(this) RETURN m LIMIT 1", {this: p}, false),
-  team: [(p)<-[:MANAGES]-()-[:MANAGES]->(t) | t],
-  line: [(s)<-[:MANAGES]-(p) | s],
-  products: [(p)-[:KNOWS]->(pr) | pr],
-  building: [(p)-[:BASED_IN]->(b) | b]
-  } AS person
+  .name,
+  .description,
+  .id } AS product
   '''.replace('$id', id)

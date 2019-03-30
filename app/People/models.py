@@ -2,7 +2,8 @@ from py2neo.ogm import GraphObject, Property, RelatedTo
 
 class Person(GraphObject):
     '''
-    Person object, this represent a person entity nad his relationships to other entities
+    Person object, 
+    this represent a person entity and their relationships to other entities
     '''
 
     id = Property()

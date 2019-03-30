@@ -1,8 +1,8 @@
-from py2neo.ogm import GraphObject, Property, RelatedTo
+from py2neo.ogm import GraphObject, Property
 
 class Search(GraphObject):
     '''
-    Search object, this represent a person entity nad his relationships to other entities
+    Search object
     '''
 
     id = Property()
@@ -14,9 +14,6 @@ class Search(GraphObject):
     bio = Property()
     knownAs = Property()
     avatar = Property()
-
-    team = RelatedTo('Person')
-    manager = RelatedTo('Person', 'MANAGES')
 
     def as_dict(self):
         return {

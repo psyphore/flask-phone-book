@@ -10,8 +10,6 @@ BIND_PORT = env.int('BIND_PORT', default=5000)
 
 NEO4J_HOST = env('NEO4J_HOST', default='localhost')
 NEO4J_PORT = env.int('NEO4J_BOLT_PORT', default=7687)
-NEO4J_HTTP_PORT = env.int('NEO4J_HTTP_PORT', default=7474)
-NEO4J_BOLT_PORT = env.int('NEO4J_BOLT_PORT', default=7687)
 NEO4J_USER = env('NEO4J_USER', default='neo4j')
 NEO4J_PASSWORD = env('NEO4J_PASSWORD', default='n4j')
 

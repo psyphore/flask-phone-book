@@ -10,7 +10,10 @@ service = BuildingService()
 
 
 class BuildingType(graphene.ObjectType):
-    '''Building Type, represents a GraphQL version of a person entity'''
+    '''
+    Building Type, 
+        represents a GraphQL version of a building entity
+    '''
 
     id = graphene.ID(required=True)
 
