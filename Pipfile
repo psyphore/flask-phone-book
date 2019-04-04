@@ -16,6 +16,8 @@ pytz = {editable = true,version = "*"}
 flask-jwt-extended = "*"
 passlib = "*"
 flask-graphql-auth = "*"
+pandas = "*"
+scikit-image = "*"
 
 [dev-packages]
 ipdb = "*"
