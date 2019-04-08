@@ -18,6 +18,7 @@ passlib = "*"
 flask-graphql-auth = "*"
 pandas = "*"
 scikit-image = "*"
+scipy = "*"
 
 [dev-packages]
 ipdb = "*"
