@@ -5,6 +5,8 @@ from .models import Product
 from .service import ProductService
 from .graphql_types import ProductType
 
+service = ProductService()
+
 class ProductQuery(graphene.ObjectType):   
     '''
     Product Query, 
@@ -14,12 +16,9 @@ class ProductQuery(graphene.ObjectType):
     product = graphene.Field(ProductType, id=graphene.NonNull(graphene.ID))
     products = graphene.List(lambda: ProductType, limit=graphene.Int(10))
 
-    def __init__(self):
-        self.service = ProductService()
-    
     def resolve_product(self, info, **args):
         identity = args.get("id")
-        product = self.service.fetch(id=identity)
+        product = service.fetch(id=identity)
         if product is None:
             raise GraphQLError(
                 f'"{identity}" has not been found in our people list.')
@@ -28,7 +27,7 @@ class ProductQuery(graphene.ObjectType):
 
     def resolve_products(self, info, **args):
         l = args.get("limit")
-        products = self.service.fetch_all(limit=l)
+        products = service.fetch_all(limit=l)
         if products is None:
             raise GraphQLError('we did not find any people, please populate first.')
 

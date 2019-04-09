@@ -7,6 +7,8 @@ from .models import Person
 from .service import PeopleService
 from .graphql_types import Character, PersonType, CreatePerson, UpdatePerson, ProtectedPersonType, Authenticate
 
+service = PeopleService()
+
 class PeopleQuery(graphene.ObjectType):   
     '''People Query, 
         fetch person entries matching to provided criteria
@@ -16,19 +18,16 @@ class PeopleQuery(graphene.ObjectType):
     people = graphene.List(lambda: PersonType, limit=graphene.Int(10))
     me = graphene.Field(lambda: ProtectedPersonType)
 
-    def __init__(self):
-        self.service = PeopleService()
-        
     def resolve_person(self, info, id):
-        person = self.service.fetch(id=id)[0]
+        person = service.fetch(id=id)[0]
         if person is None:
             raise GraphQLError(
-                f'"{identity}" has not been found in our people list.')
+                f'"{id}" has not been found in our people list.')
 
         return PersonType(**Person.wrap(person).as_dict())
 
     def resolve_people(self, info, **args):
-        people = self.service.fetch_all(limit=args.get("limit"))
+        people = service.fetch_all(limit=args.get("limit"))
         if people is None:
             raise GraphQLError('we did not find any people, please populate first.')
 
@@ -37,7 +36,7 @@ class PeopleQuery(graphene.ObjectType):
     def resolve_me(self, info):
         decoded = utilities.get_user_info(info.context.headers.get('Authorization'))
         if decoded is not None:
-            person = self.service.fetch_protected(decoded)
+            person = service.fetch_protected(decoded)
             if person is None:
                 raise GraphQLError('User not authorized.')
             ppt = ProtectedPersonType(**person)

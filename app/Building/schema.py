@@ -7,7 +7,6 @@ from .graphql_types import BuildingType
 
 service = BuildingService()
 
-
 class BuildingQuery(graphene.ObjectType):
     '''
         Building Query, 
