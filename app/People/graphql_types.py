@@ -63,6 +63,9 @@ class ProtectedPersonType(graphene.ObjectType):
     employment_anniversary = graphene.Date()
     authorization_key = graphene.String()
 
+    def resolve_person(self, info, **args):
+        return PersonType(**Person.wrap(self.person).as_dict())
+
 class AuthorizationType(graphene.ObjectType):
     id_token = graphene.String()
     access_token = graphene.String()
