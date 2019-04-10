@@ -2,7 +2,7 @@ import graphene
 from graphql import GraphQLError
 from flask_graphql_auth import (query_jwt_required)
 
-from app import utilities
+from app.utilities import (get_user_info)
 from .models import Person
 from .service import PeopleService
 from .graphql_types import Character, PersonType, CreatePerson, UpdatePerson, ProtectedPersonType, Authenticate
@@ -34,7 +34,7 @@ class PeopleQuery(graphene.ObjectType):
         return [PersonType(**Person.wrap(p).as_dict()) for p in people]
 
     def resolve_me(self, info):
-        decoded = utilities.get_user_info(info.context.headers.get('Authorization'))
+        decoded = get_user_info(info.context.headers.get('Authorization'))
         if decoded is not None:
             person = service.fetch_protected(decoded)
             if person is None:

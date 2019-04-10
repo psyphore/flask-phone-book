@@ -28,16 +28,16 @@ def filter_person_query(name, skip, first):
 
 def filter_person_query_2(name, skip, first):
   return '''
-    WITH {name} AS query
+    WITH '{name}' AS query
     OPTIONAL MATCH (p:Person), (b:Building), (pr:Product)
-    WHERE   p.title =~ '(?i).*{name}.*'
+    WHERE   (p.title =~ '(?i).*{name}.*'
             OR p.firstname =~ '(?i){name}.*'
             OR p.lastname =~ '(?i){name}.*'
-            OR query CONTAINS " " AND (toLower(query) = toLower(p.firstname)+ " "+ toLower(p.lastname)))
-            OR query CONTAINS ", " AND (toLower(query) = toLower(p.lastname)+ ", "+ toLower(p.firstname)))
-      OR ((p)--(b) AND (toLower(b.name) CONTAINS toLower(query) OR toLower(b.address) CONTAINS toLower(query)))
-        OR ((p)--(pr) AND (toLower(pr.name) CONTAINS toLower(query))
-    WITH p { 
+            OR query CONTAINS " " AND (toLower(query) = toLower(p.firstname) + " " + toLower(p.lastname))
+            OR query CONTAINS ", " AND (toLower(query) = toLower(p.lastname) + ", " + toLower(p.firstname))
+        OR ((p)--(b) AND (toLower(b.name) CONTAINS toLower(query) OR toLower(b.address) CONTAINS toLower(query)))
+        OR ((p)--(pr) AND (toLower(pr.name) CONTAINS toLower(query))))
+    RETURN p { 
       .firstname,
       .mobile,
       .bio,
@@ -53,8 +53,7 @@ def filter_person_query_2(name, skip, first):
       products: [(p)-[:KNOWS]->(pr) | pr],
       building: [(p)-[:BASED_IN]->(b) | b]
       } AS person
-    RETURN DISTINCT person
-    ORDER BY person.lastname ASC, person.firstname ASC
-    SKIP {skip}
-    LIMIT {first}
+  ORDER BY person.lastname ASC, person.firstname ASC
+  SKIP {skip}
+  LIMIT {first}
   '''.replace('{name}',name).replace('{skip}',skip).replace('{first}',first)

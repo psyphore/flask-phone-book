@@ -5,7 +5,7 @@ from passlib.hash import pbkdf2_sha256 as sha256
 from pandas import read_csv, read_excel
 from skimage import data, io, util
 from skimage.color import rgb2gray
-import numpy
+import numpy as np
 
 from app import settings
 
@@ -20,6 +20,7 @@ def get_user_info(token):
   if token is not None:
     decoded = decode_token(encoded_token=token,allow_expired=True)
     if decoded is not None:
+      print(f'> decoded to: {dumps(decoded)}')
       return decoded
   return None
 

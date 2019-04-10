@@ -84,7 +84,7 @@ class PeopleService():
             person = self.fetch(decoded.get('identity'))
             return {
                 'person': person[0],
-                'leave_items': [str(f'> leave item # {x}') for x in range(0, 10)],
+                'leave_items': [str(f'> leave item # {x + 1}') for x in range(0, 10)],
                 'authorization_key':decoded.get('jti'),
                 'salary_level': 4,
                 'birth_date' : Datetime(1987,3,9),
