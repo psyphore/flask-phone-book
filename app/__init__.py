@@ -8,6 +8,8 @@ from app.graph_context import GraphContext
 from app.Middleware.auth_middleware import AuthMiddleware
 from app.Middleware.logger_middleware import LoggerMiddleware
 
+from app.routes import (media, stream_content)
+
 from .schemas import schema
 
 
@@ -28,11 +30,15 @@ def create_app():
     jwt = JWTManager(app)
 
     app.add_url_rule('/graphql',
-                     view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
+                     view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=settings.DEBUG))
 
-    # @app.teardown_appcontext
-    # def shutdown_session(exception=None):
-    #     print('> need to kill the graph_instance context')
+    @app.route('/stream/<string:name>')
+    def streamed_content(name):
+        return stream_content(name)
+
+    @app.route('/media/<string:id>/<int:height>/<int:width>')
+    def fetch_media(id, height, width):
+        return media(id,height,width)
 
     @app.errorhandler(400)
     def bad_request(e):

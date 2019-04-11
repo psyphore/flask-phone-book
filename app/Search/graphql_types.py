@@ -1,6 +1,8 @@
 import graphene
 
 from app.People.graphql_types import PersonType
+from app.Building.graphql_types import BuildingType
+from app.Product.graphql_types import ProductType
 
 class SearchType(graphene.InputObjectType):
     '''Search, 

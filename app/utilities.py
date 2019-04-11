@@ -69,3 +69,14 @@ def get_image_data(img_path):
 def grey_out_image(img_path):
   image_data=get_image_data(img_path)
   return rgb2gray(image_data)
+
+def fetch_media(id, height, width):
+  return {
+    'data': '',
+    'mime_type': 'image/png',
+    'cache': (1000 * 60)
+  }
+
+def stream_media(id):
+  for i in ['Hello ',id,' !']:
+    yield i
