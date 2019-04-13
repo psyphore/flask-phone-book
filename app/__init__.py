@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, make_response, send_file, request
 from flask_graphql import GraphQLView
 from flask_graphql_auth import GraphQLAuth
 from flask_jwt_extended import (JWTManager, jwt_required)
@@ -7,6 +7,8 @@ from app import settings
 from app.graph_context import GraphContext
 from app.Middleware.auth_middleware import AuthMiddleware
 from app.Middleware.logger_middleware import LoggerMiddleware
+
+from app.utilities import (another_image_processor_2, read_image)
 
 from .schemas import schema
 
@@ -33,6 +35,22 @@ def create_app():
     # @app.teardown_appcontext
     # def shutdown_session(exception=None):
     #     print('> need to kill the graph_instance context')
+
+    @app.route('/media/<:id>')
+    def media(id):
+        image_binary = read_image(id)
+        response = make_response(image_binary)
+        response.headers.set('Content-Type', 'image/png')
+        response.headers.set(
+            'Content-Disposition', 'attachment', filename='%s.png' % id)
+        # return response
+        pass
+    
+    @app.route('/process_image', methods=['post'])
+    def process_image():
+        another_image_processor_2(request.form['data'])
+        return json.dumps({'result': 'success'}), 200, {'ContentType': 'application/json'}
+        
 
     @app.errorhandler(400)
     def bad_request(e):

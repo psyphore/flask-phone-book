@@ -1,4 +1,6 @@
-from base64 import (b64decode, standard_b64decode, urlsafe_b64decode)
+import re
+from io import (BytesIO)
+from base64 import (b64encode, b64decode, standard_b64decode, urlsafe_b64decode)
 from json import (dump, dumps)
 from flask_jwt_extended import (create_access_token, create_refresh_token, decode_token)
 from passlib.hash import pbkdf2_sha256 as sha256
@@ -6,6 +8,7 @@ from pandas import read_csv, read_excel
 from skimage import data, io, util
 from skimage.color import rgb2gray
 import numpy as np
+from PIL import Image
 
 from app import settings
 
@@ -69,3 +72,31 @@ def get_image_data(img_path):
 def grey_out_image(img_path):
   image_data=get_image_data(img_path)
   return rgb2gray(image_data)
+
+def read_image_data():
+  with open("t.png", "rb") as imageFile:
+    str = b64encode(imageFile.read())
+    print(str)
+
+def encode_image_string():
+  with open("imageToSave.png", "wb") as fh:
+    fh.write(str.decode('base64'))
+
+def another_image_processor():
+  data['img'] = '''
+  R0lGODlhDwAPAKECAAAAzMzM/////wAAACwAAAAADwAPAAACIISPeQHsrZ5ModrLlN48CXF8m2iQ3YmmKqVlRtW4MLwWACH+H09wdGltaXplZCBieSBVbGVhZCBTbWFydFNhdmVyIQAAOw==
+''' 
+  im = Image.open(BytesIO(b64decode(data)))
+  pass
+
+def another_image_processor_2(payload_data):
+  # image_data = re.sub('^data:image/.+;base64,', '', request.form['data'])
+  # with Image.open(BytesIO(b64decode(image_data))) as im
+  image_data = re.sub('^data:image/.+;base64,', '', payload_data).decode('base64')
+  image = Image.open(cStringIO.StringIO(image_data))
+  pass
+
+def encode_image_data(data):
+  image_data = bytes(data, encoding="ascii")
+  image = Image.open(BytesIO(b64decode(image_data)))
+  image.save('image.png')
