@@ -18,5 +18,5 @@ def save_media_query(data, mimetype, parentId, label):
 
 def fetch_media_query(id):
     return '''
-    MATCH (media:Media{id:'{_id}'}) REUTRN media
+    MATCH (media:Media{id:'{_id}'}) RETURN media
     '''.replace('{_id}', id)

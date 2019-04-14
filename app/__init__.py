@@ -8,7 +8,7 @@ from app.graph_context import GraphContext
 from app.Middleware.auth_middleware import AuthMiddleware
 from app.Middleware.logger_middleware import LoggerMiddleware
 
-from app.utilities import (another_image_processor_2, read_image)
+from app.Routes import media_route
 
 from .schemas import schema
 
@@ -32,24 +32,18 @@ def create_app():
     app.add_url_rule('/graphql',
                      view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
 
-    # @app.teardown_appcontext
-    # def shutdown_session(exception=None):
-    #     print('> need to kill the graph_instance context')
+    @app.route('/media/<string:id>', defaults={'height': None, 'width': None, 'color': None})
+    @app.route('/media/<string:id>/<int:height>/<int:width>', defaults={'color': None})
+    @app.route('/media/<string:id>/<int:height>/<int:width>/<string:color>')
+    def media(id,height,width, color):
+        if color:
+            return media_route.get_media(id, height=height, width=width, grey=True)
 
-    @app.route('/media/<:id>')
-    def media(id):
-        image_binary = read_image(id)
-        response = make_response(image_binary)
-        response.headers.set('Content-Type', 'image/png')
-        response.headers.set(
-            'Content-Disposition', 'attachment', filename='%s.png' % id)
-        # return response
-        pass
+        return media_route.get_media(id, height=height, width=width, grey=False)
     
-    @app.route('/process_image', methods=['post'])
+    @app.route('/media', methods=['post'])
     def process_image():
-        another_image_processor_2(request.form['data'])
-        return json.dumps({'result': 'success'}), 200, {'ContentType': 'application/json'}
+        return media_route.process_media(request.form['data'])
         
 
     @app.errorhandler(400)

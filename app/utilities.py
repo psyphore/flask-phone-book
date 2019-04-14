@@ -21,7 +21,7 @@ def verify_hash(password, hash):
 def get_user_info(token):
   token = str(token).strip().replace('Bearer ', '')
   if token is not None:
-    decoded = decode_token(encoded_token=token,allow_expired=True)
+    decoded = decode_token(encoded_token=token,allow_expired=settings.DEBUG)
     if decoded is not None:
       print(f'> decoded to: {dumps(decoded)}')
       return decoded
@@ -63,40 +63,4 @@ def read_file(file_path):
   with open(file=file_path, mode='r') as content:
     data=content.read()
     return data
-  
-
-def get_image_data(img_path):
-  with io.imread(img_path) as content:
-    return content
-
-def grey_out_image(img_path):
-  image_data=get_image_data(img_path)
-  return rgb2gray(image_data)
-
-def read_image_data():
-  with open("t.png", "rb") as imageFile:
-    str = b64encode(imageFile.read())
-    print(str)
-
-def encode_image_string():
-  with open("imageToSave.png", "wb") as fh:
-    fh.write(str.decode('base64'))
-
-def another_image_processor():
-  data['img'] = '''
-  R0lGODlhDwAPAKECAAAAzMzM/////wAAACwAAAAADwAPAAACIISPeQHsrZ5ModrLlN48CXF8m2iQ3YmmKqVlRtW4MLwWACH+H09wdGltaXplZCBieSBVbGVhZCBTbWFydFNhdmVyIQAAOw==
-''' 
-  im = Image.open(BytesIO(b64decode(data)))
-  pass
-
-def another_image_processor_2(payload_data):
-  # image_data = re.sub('^data:image/.+;base64,', '', request.form['data'])
-  # with Image.open(BytesIO(b64decode(image_data))) as im
-  image_data = re.sub('^data:image/.+;base64,', '', payload_data).decode('base64')
-  image = Image.open(cStringIO.StringIO(image_data))
-  pass
-
-def encode_image_data(data):
-  image_data = bytes(data, encoding="ascii")
-  image = Image.open(BytesIO(b64decode(image_data)))
-  image.save('image.png')
+    
