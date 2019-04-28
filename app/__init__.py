@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, make_response, send_file, request
 from flask_graphql import GraphQLView
 from flask_graphql_auth import GraphQLAuth
 from flask_jwt_extended import (JWTManager, jwt_required)
@@ -8,7 +8,7 @@ from app.graph_context import GraphContext
 from app.Middleware.auth_middleware import AuthMiddleware
 from app.Middleware.logger_middleware import LoggerMiddleware
 
-from app.routes import (media, stream_content)
+from app.Routes import media_route
 
 from .schemas import schema
 
@@ -36,9 +36,19 @@ def create_app():
     def streamed_content(name):
         return stream_content(name)
 
-    @app.route('/media/<string:id>/<int:height>/<int:width>')
-    def fetch_media(id, height, width):
-        return media(id,height,width)
+    @app.route('/media/<string:id>', defaults={'height': None, 'width': None, 'color': None})
+    @app.route('/media/<string:id>/<int:height>/<int:width>', defaults={'color': None})
+    @app.route('/media/<string:id>/<int:height>/<int:width>/<string:color>')
+    def media(id,height,width, color):
+        if color:
+            return media_route.get_media(id, height=height, width=width, grey=True)
+
+        return media_route.get_media(id, height=height, width=width, grey=False)
+    
+    @app.route('/media', methods=['post'])
+    def process_image():
+        return media_route.process_media(request.form['data'])
+        
 
     @app.errorhandler(400)
     def bad_request(e):

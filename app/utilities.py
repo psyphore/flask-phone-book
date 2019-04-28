@@ -1,4 +1,6 @@
-from base64 import (b64decode, standard_b64decode, urlsafe_b64decode)
+import re
+from io import (BytesIO)
+from base64 import (b64encode, b64decode, standard_b64decode, urlsafe_b64decode)
 from json import (dump, dumps)
 from flask_jwt_extended import (create_access_token, create_refresh_token, decode_token)
 from passlib.hash import pbkdf2_sha256 as sha256
@@ -6,6 +8,7 @@ from pandas import read_csv, read_excel
 from skimage import data, io, util
 from skimage.color import rgb2gray
 import numpy as np
+from PIL import Image
 
 from app import settings
 
@@ -18,7 +21,7 @@ def verify_hash(password, hash):
 def get_user_info(token):
   token = str(token).strip().replace('Bearer ', '')
   if token is not None:
-    decoded = decode_token(encoded_token=token,allow_expired=True)
+    decoded = decode_token(encoded_token=token,allow_expired=settings.DEBUG)
     if decoded is not None:
       print(f'> decoded to: {dumps(decoded)}')
       return decoded
@@ -60,23 +63,4 @@ def read_file(file_path):
   with open(file=file_path, mode='r') as content:
     data=content.read()
     return data
-  
-
-def get_image_data(img_path):
-  with io.imread(img_path) as content:
-    return content
-
-def grey_out_image(img_path):
-  image_data=get_image_data(img_path)
-  return rgb2gray(image_data)
-
-def fetch_media(id, height, width):
-  return {
-    'data': '',
-    'mime_type': 'image/png',
-    'cache': (1000 * 60)
-  }
-
-def stream_media(id):
-  for i in ['Hello ',id,' !']:
-    yield i
+    

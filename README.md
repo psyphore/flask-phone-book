@@ -19,6 +19,7 @@ My 1st take at Python, Flask, GraphQL, Neo4J
 1. [How to GraphQL](https://www.howtographql.com/graphql-python)
 1. [Flask + GraphQL + JWT](https://media.readthedocs.org/pdf/flask-graphql-auth/latest/flask-graphql-auth.pdf)
 1. [Scikit-image](http://scikit-image.org/docs/stable/api/api.html)
+1. [PILlow](https://pillow.readthedocs.io/en/latest/index.html)
 
 ## Commands
 
