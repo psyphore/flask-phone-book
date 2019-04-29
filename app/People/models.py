@@ -20,6 +20,7 @@ class Person(GraphObject):
     # building = RelatedTo('Building', 'BASED_IN')
     team = RelatedTo('Person')
     manager = RelatedTo('Person', 'MANAGES')
+    deactivated = Property()
 
     def as_dict(self):
         return {
@@ -33,7 +34,8 @@ class Person(GraphObject):
             'knownAs': self.knownAs,
             'avatar': self.avatar,
             'team': self.team,
-            'manager': self.manager
+            'manager': self.manager,
+            'deactivated': self.deactivated
         }
 
     def __str__(self):
