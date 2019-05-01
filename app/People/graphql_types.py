@@ -26,6 +26,7 @@ class Character(graphene.Interface):
     line = graphene.List(lambda: Character)
     team = graphene.List(lambda: Character)
     manager = graphene.Field(lambda: Character)
+    deactivated = graphene.String()
 
 class PersonType(graphene.ObjectType):
     '''Person Type, represents a GraphQL version of a person entity'''
