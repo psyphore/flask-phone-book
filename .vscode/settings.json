@@ -1,3 +1,35 @@
 {
-    "python.pythonPath": "C:\\Users\\Siphoh\\.virtualenvs\\flask-phone-book-bYA8YDdA\\Scripts\\python.exe"
+  // "python.pythonPath": "C:\\Users\\Epic Child\\.virtualenvs\\flask-phone-book-S3sb-Ql_\\Scripts\\python.exe",
+  "python.pythonPath": "C:\\Users\\Siphoh\\.virtualenvs\\flask-phone-book-bYA8YDdA\\Scripts\\python.exe",
+  "python.linting.enabled": true,
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "terminal.integrated.fontSize": 14,
+  "editor.fontSize": 14,
+  "editor.minimap.enabled": false,
+  "editor.autoIndent": true,
+  "editor.codeLens": true,
+  "workbench.editor.showTabs": true,
+  "breadcrumbs.enabled": true,
+  "window.zoomLevel": 0.75,
+  "editor.formatOnSave": false,
+  "files.exclude": {
+    "**/.git": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/coverage": true
+  },
+  "[python]": {
+    "editor.tabSize": 2
+  },
+  "workbench.iconTheme": "vscode-icons",
+  "editor.fontFamily": "Fira Code",
+  "terminal.integrated.fontFamily": "Fira Code",
+  "terminal.integrated.fontWeightBold": "normal",
+  "terminal.integrated.shell.windows": "C:\\WINDOWS\\sysnative\\cmd.exe",
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#4fac7b",
+    "titleBar.inactiveBackground": "#4fac7b99",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveForeground": "#15202b99"
+  }
 }

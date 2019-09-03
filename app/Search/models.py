@@ -1,9 +1,8 @@
-from py2neo.ogm import GraphObject, Property, RelatedTo
+from py2neo.ogm import GraphObject, Property
 
-class Person(GraphObject):
+class Search(GraphObject):
     '''
-    Person object, 
-    this represent a person entity and their relationships to other entities
+    Search object
     '''
 
     id = Property()
@@ -16,12 +15,6 @@ class Person(GraphObject):
     knownAs = Property()
     avatar = Property()
 
-    # products = RelatedTo('Product', 'KNOWS')
-    # building = RelatedTo('Building', 'BASED_IN')
-    team = RelatedTo('Person')
-    manager = RelatedTo('Person', 'MANAGES')
-    deactivated = Property()
-
     def as_dict(self):
         return {
             'id': self.id,
@@ -32,10 +25,7 @@ class Person(GraphObject):
             'email': self.email,
             'bio': self.bio,
             'knownAs': self.knownAs,
-            'avatar': self.avatar,
-            'team': self.team,
-            'manager': self.manager,
-            'deactivated': self.deactivated
+            'avatar': self.avatar
         }
 
     def __str__(self):

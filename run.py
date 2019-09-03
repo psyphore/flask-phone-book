@@ -9,4 +9,5 @@ if __name__ == '__main__':
         host=settings.BIND_HOST,
         port=settings.BIND_PORT,
         debug=settings.DEBUG,
+        load_dotenv=True
     )

@@ -1,69 +1,57 @@
 import graphene
+from graphql import GraphQLError
+from flask_graphql_auth import (query_jwt_required)
 
+from app.utilities import (get_user_info)
 from .models import Person
 from .service import PeopleService
+from .graphql_types import Character, PersonType, CreatePerson, UpdatePerson, ProtectedPersonType, Authenticate
+
+service = PeopleService()
+
+class PeopleQuery(graphene.ObjectType):   
+    '''People Query, 
+        fetch person entries matching to provided criteria
+    '''
+
+    person = graphene.Field(PersonType, id=graphene.NonNull(graphene.ID))
+    people = graphene.List(lambda: PersonType, limit=graphene.Int(10))
+    me = graphene.Field(lambda: ProtectedPersonType)
+
+    def resolve_person(self, info, id):
+        person = service.fetch(id=id)[0]
+        if person is None:
+            raise GraphQLError(
+                f'"{id}" has not been found in our people list.')
+
+        return PersonType(**Person.wrap(person).as_dict())
+
+    def resolve_people(self, info, **args):
+        people = service.fetch_all(limit=args.get("limit"))
+        if people is None:
+            raise GraphQLError('we did not find any people, please populate first.')
+
+        return [PersonType(**Person.wrap(p).as_dict()) for p in people]
+
+    def resolve_me(self, info):
+        decoded = get_user_info(info.context.headers.get('Authorization'))
+        if decoded is not None:
+            person = service.fetch_protected(decoded)
+            if person is None:
+                raise GraphQLError('User not authorized.')
+            ppt = ProtectedPersonType(**person)
+            return ppt
+        return None
 
 
-class PersonSchema(graphene.ObjectType):
-    title = graphene.String()
-    firstname = graphene.String()
-    lastname = graphene.String()
-    mobile_number = graphene.String()
-    email_address = graphene.String()
-    date_updated = graphene.DateTime()
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        svc = PeopleService()
-        self.customer = svc(email=self.email).fetch()
-
-    def resolve_team(self, info):
-        # return [StoreSchema(**store.as_dict()) for store in self.customer.stores]
-        pass
-
-    def resolve_manager(self, info):
-        # return [ReceiptSchema(**receipt.as_dict()) for receipt in self.customer.receipts]
-        pass
-
-    def resolve_products(self, info):
-        # return [ProductSchema(**product.as_dict()) for product in self.customer.products]
-        pass
+class PeopleMutations(graphene.ObjectType):
+    '''People Mutations, 
+        create new person object or 
+        update an existing person object
+    '''
+    create_person = CreatePerson.Field()
+    update_person = UpdatePerson.Field()
+    auth_person = Authenticate.Field()
 
 
-class CreatePerson(graphene.Mutation):
-    class Arguments:
-        name = graphene.String(required=True)
-        email = graphene.String(required=True)
-
-    success = graphene.Boolean()
-    customer = graphene.Field(lambda: CustomerSchema)
-
-    def mutate(self, info, **kwargs):
-        customer = Customer(**kwargs)
-        customer.save()
-
-        return CreateCustomer(customer=customer, success=True)
-
-
-class Query(graphene.ObjectType):
-    customer = graphene.Field(lambda: CustomerSchema, email=graphene.String())
-    stores = graphene.List(lambda: StoreSchema)
-    products = graphene.List(lambda: ProductSchema)
-
-    def resolve_customer(self, info, email):
-        customer = Customer(email=email).fetch()
-        return CustomerSchema(**customer.as_dict())
-
-    def resolve_stores(self, info):
-        return [StoreSchema(**store.as_dict()) for store in Store().all]
-
-    def resolve_products(self, info):
-        return [ProductSchema(**product.as_dict()) for product in Product().all]
-
-
-class Mutations(graphene.ObjectType):
-    create_customer = CreateCustomer.Field()
-    submit_receipt = SubmitReceipt.Field()
-
-
-schema = graphene.Schema(query=Query, mutation=Mutations, auto_camelcase=True)
+schema = graphene.Schema(query=PeopleQuery, mutation=PeopleMutations, auto_camelcase=True)

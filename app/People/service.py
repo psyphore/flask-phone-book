@@ -1,74 +1,96 @@
-from graphql import GraphQLError
+from maya import Datetime, when
+from py2neo.ogm import Node
+
 from app.graph_context import GraphContext
 
-from .models import Person
+from .cypher_queries import get_person_by_id_query
 
 
-class PeopleService(Person):
+class PeopleService():
     '''
     This People Service houses all the actions can be performed against the person object
     '''
 
-    def __init__(self, *args, **kwargs):
-        self.graph = GraphContext.get_instance()
+    def fetch(self, id):
+        '''Fetch a single person with matching id'''
 
-    def fetch(self):
-        customer = self.select(self.graph, self.email).first()
-        if customer is None:
-            raise GraphQLError(
-                f'"{self.email}" has not been found in our customers list.')
+        try:
+            return [Node.cast(node.values()) for node in GraphContext().exec_cypher(get_person_by_id_query(id))]
+        except Exception as ex:
+            print(f'ps_f X exception: {ex}')
+            return None
 
-        return customer
+    def fetch_all(self, limit=100):
+        '''Fetch all Person nodes stored ordered by firstname limited (default=100)'''
 
-    # def __verify_products(self, products):
-    #     _total_amount = 0
-    #     for product in products:
-    #         _product = Product(name=product.get('name')).fetch()
-    #         if _product is None:
-    #             raise GraphQLError(
-    #                 f'"{product.name}" has not been found in our products list.')
+        try:
+            matcher = GraphContext().get_node_matcher
+            response = list(matcher.match('Person').order_by(
+                "_.firstname").limit(limit))
+            return response
+        except Exception as ex:
+            print(f'ps_fa X exception: {ex}')
+            return []
 
-    #         _total_amount += product['price'] * product['amount']
-    #         product['product'] = _product
-    #     return products, _total_amount
+    def fetch_team(self, person):
+        '''Fetch all people who share the same manager as current person'''
 
-    # def __verify_receipt(self, receipt):
-    #     customer_properties = f":Customer {{email: '{self.email}'}}"
-    #     receipt_properties = f":Receipt {{timestamp: '{receipt.timestamp}', total_amount:{receipt.total_amount}}}"
-    #     existing_receipts = self.graph.run(
-    #         f"MATCH ({customer_properties})-[relation:HAS]-({receipt_properties}) RETURN relation").data()
+        items = None
+        try:
+            team = person.team.node.get("team")
+            if team is not None:
+                items = [member for member in team]
 
-    #     if existing_receipts:
-    #         raise GraphQLError(
-    #             "The receipt you're trying to submit already exists.")
+            if items is not None:
+                return items
 
-    # def __link_products(self, products, total_amount, timestamp):
-    #     receipt = Receipt(total_amount=total_amount,
-    #                       timestamp=timestamp, validate=True)
-    #     self.__verify_receipt(receipt)
+            return []
+        except Exception as ex:
+            print(f'ps_ft X exception: {ex}')
+            return []
 
-    #     for item in products:
-    #         receipt.products.add(item.pop('product'), properties=item)
+    def fetch_line(self, person):
+        '''Fetch all people who report the current person'''
+        items = None
+        try:
+            lines = person.team.node.get("line")
+            if lines is not None:
+                items = [item for item in lines]
 
-    #     return receipt
+            if items is not None:
+                return items
+                
+            return []
+        except Exception as ex:
+            print(f'ps_fl X exception: {ex}')
+            return []
 
-    # def __verify_store(self, store):
-    #     _store = Store(**store).fetch_by_name_and_address()
-    #     if _store is None:
-    #         raise GraphQLError(
-    #             f"The store \"{store['name']}\" does not exist in our stores list.")
+    def fetch_manager(self, person):
+        '''Fetch all people who share the same manager as current person'''
 
-    #     return _store
+        try:
+            item = person.manager.node.get("manager")
+            if item is not None:
+                return item
+            return None
+        except Exception as ex:
+            print(f'ps_fm X exception: {ex}')
+            return []
 
-    # def __add_links(self, store, receipt):
-    #     store.receipts.add(receipt)
-    #     self.stores.add(store)
-    #     self.receipts.add(receipt)
+    def fetch_protected(self, decoded):
+        '''Fetch a single person with matching decoded access token'''
 
-    # def submit_receipt(self, products, timestamp, store):
-    #     self.__add_links(
-    #         self.__verify_store(store),
-    #         self.__link_products(*self.__verify_products(products), timestamp)
-    #     )
-
-    #     self.save()
+        try:
+            person = self.fetch(decoded.get('identity'))
+            return {
+                'person': person[0],
+                'leave_items': [str(f'> leave item # {x + 1}') for x in range(0, 10)],
+                'authorization_key':decoded.get('jti'),
+                'salary_level': 4,
+                'birth_date' : Datetime(1987,3,9),
+                'next_of_keen' : 'Spouse',
+                'employment_anniversary' : Datetime(2018,1,4)
+            }
+        except Exception as ex:
+            print(f'ps_f X exception: {ex}')
+            return None

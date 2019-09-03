@@ -11,12 +11,25 @@ flask-graphql = {editable = true,version = "*"}
 maya = "*"
 environs = "*"
 flask-migrate = "*"
-autopep8 = {editable = true,version = "*"}
+pyopenssl = "*"
+pytz = {editable = true,version = "*"}
+flask-jwt-extended = "*"
+passlib = "*"
+flask-graphql-auth = "*"
+pandas = "*"
+scikit-image = "*"
+scipy = "*"
 
 [dev-packages]
 ipdb = "*"
 "flake8" = "*"
-"autopep8" = "*"
+autopep8 = {editable = true,version = "*"}
+pytest = "*"
+pytest-cov = "*"
+Jinja2 = ">=2.10.1"
+urllib3 = ">=1.24.2"
+werkzeug = ">=0.15.3"
+SQLAlchemy = ">=1.3.0"
 
 [requires]
 python_version = "3.7"
