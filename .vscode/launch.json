@@ -18,7 +18,7 @@
       "envFile": "${workspaceFolder}\\.env",
       "jinja": true,
       // "pythonPath": "C:\\Users\\Epic Child\\.virtualenvs\\flask-phone-book-S3sb-Ql_\\Scripts\\python.exe"
-      "pythonPath": "C:\\Users\\Siphoh\\.virtualenvs\\flask-phone-book-bYA8YDdA\\Scripts\\python.exe"
+      // "pythonPath": "C:\\Users\\Siphoh\\.virtualenvs\\flask-phone-book-bYA8YDdA\\Scripts\\python.exe"
     }
   ]
 }
